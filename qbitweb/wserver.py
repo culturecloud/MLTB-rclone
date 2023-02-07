@@ -1,9 +1,12 @@
+import os
+import datetime as dt
 from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
-from flask import Flask, request
+from flask import Flask, request, render_template, abort, safe_join, send_file
 from qbitweb.nodes import make_tree
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -14,6 +17,8 @@ basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
                     level=INFO)
 
 LOGGER = getLogger(__name__)
+
+FolderPath = "/culturecloud/mltb/downloads/"
 
 home = """
 <!DOCTYPE html><meta charset=UTF-8><meta content="width=device-width,initial-scale=1"name=viewport><script src=https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js></script><style>body{background-color:#000;height:100vh;font-family:'Source Serif Pro',serif;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}a{color:#fff}img{max-width:30%;height:auto;display:block;margin-left:auto;margin-right:auto}h2{color:#fff000;margin-top:0}@media (max-width:576px){h2{font-size:32px}img{max-width:70%}}#particles-js{position:absolute;z-index:-1;height:100vh}footer{color:#fff;position:absolute;bottom:0;left:0;right:0;text-align:center}</style><div id=particles-js></div><div><img alt="Culture Cloud"src=https://cdn.jsdelivr.net/gh/culturecloud/static-resources@master/images/cc_transparent_no_outline.png><h2>Your bot is up and running!</h2></div><footer><h6>2021-23 © <a href=https://github.com/culturecloud>Culture Cloud</a></h6></footer><script>particlesJS("particles-js",{particles:{number:{value:250,density:{enable:!0,value_area:800}},color:{value:"#fff000"},shape:{type:"circle",polygon:{nb_sides:5}},opacity:{value:1,random:!1,anim:{enable:!0,speed:15,opacity_min:.1,sync:!0}},size:{value:1,random:!1,anim:{enable:!1,speed:40,size_min:0,sync:!1}},line_linked:{enable:!0,distance:100,color:"#fff000",opacity:1,width:1},move:{enable:!0,speed:3,direction:"none",random:!0,straight:!1,out_mode:"out",bounce:!1,attract:{enable:!1,rotateX:600,rotateY:1200}}},interactivity:{detect_on:"canvas",events:{onhover:{enable:!1,mode:"repulse"},onclick:{enable:!1,mode:"push"},resize:!0},modes:{grab:{distance:400,line_linked:{opacity:1}},bubble:{distance:400,size:40,duration:2,opacity:8,speed:3},repulse:{distance:200,duration:.4},push:{particles_nb:4},remove:{particles_nb:2}}},retina_detect:!0})</script>
@@ -118,6 +123,26 @@ page = """
 code_page = """
 <html lang=en><meta charset=UTF-8><meta content="IE=edge"http-equiv=X-UA-Compatible><meta content="width=device-width,initial-scale=1"name=viewport><title>Torrent Code Checker</title><link href=https://telegra.ph/file/43af672249c94053356c7.jpg rel=icon type=image/jpg><link href=https://fonts.googleapis.com rel=preconnect><link href=https://fonts.gstatic.com rel=preconnect crossorigin><link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"rel=stylesheet><link href=https://pro.fontawesome.com/releases/v5.10.0/css/all.css rel=stylesheet crossorigin=anonymous integrity=sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p><style>*{margin:0;padding:0;box-sizing:border-box;font-family:Ubuntu,sans-serif;list-style:none;text-decoration:none;color:#fff}body{background-color:#0D1117}header{margin:3vh 1vw;padding:.5rem 1rem .5rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:#161B22;border-radius:30px;background-color:#161B22;border:2px solid rgba(255,255,255,.11)}header:hover,section:hover{box-shadow:0 0 15px #000}.brand{display:flex;align-items:center}img{width:2.5rem;height:2.5rem;border:2px solid #000;border-radius:50%}.name{color:#fff;margin-left:1vw;font-size:1.5rem}.intro{text-align:center;margin-bottom:2vh;margin-top:1vh}.social a{font-size:1.5rem;color:#fff;padding-left:1vw}.brand:hover,.social a:hover{filter:invert(.3)}section{margin:0 1vw;margin-bottom:10vh;padding:1vh 3vw;display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.11);border-radius:20px;background-color:#161B22;color:#fff}section form{display:flex;margin-left:auto;margin-right:auto;flex-direction:column}section div{background-color:#0D1117;border-radius:20px;max-width:fit-content;padding:.7rem;margin-top:2vh}section label{font-size:larger;font-weight:500;margin:0 0 .5vh 1.5vw;display:block}section input[type=text]{border-radius:20px;outline:0;width:50vw;height:4vh;padding:1rem;margin:.5vh;border:2px solid rgba(255,255,255,.11);background-color:#3e475531;box-shadow:inset 0 0 10px #000}section input[type=text]:focus{border-color:rgba(255,255,255,.404)}section button{border-radius:20px;margin-top:1vh;width:100%;height:5.5vh;border:2px solid rgba(255,255,255,.11);background-color:#0D1117;color:#fff;font-size:16px;font-weight:500;cursor:pointer;transition:background-color .2s ease}section button:focus,section button:hover{background-color:rgba(255,255,255,.068)}section span{display:block;font-size:x-small;margin:1vh;font-weight:100;font-style:italic;margin-left:23%;margin-right:auto;margin-bottom:2vh}@media (max-width:768px){section form{flex-direction:column;width:90vw}section div{max-width:100%;margin-bottom:1vh}section label{margin-left:3vw;margin-top:1vh}section input[type=text]{width:calc(100% - .3rem)}section button{width:100%;height:5vh;display:block;margin-left:auto;margin-right:auto}section span{margin-left:5%}}</style><header><div class=brand><img alt=logo src=https://telegra.ph/file/43af672249c94053356c7.jpg><h2 class=name>Bittorrent Selection</h2></div><div class=social><a href=https://github.com/Sam-Max/rclone-mirror-leech-telegram-bot><i class="fa-github fab"></i></a></div></header><section><form action={form_url}><div><label for=pin_code>Pin Code :</label><input name=pin_code placeholder="Enter the code that you have got from Telegram to access the Torrent"></div><button class="btn btn-primary"type=submit>Submit</button></form><span>* Dont mess around. Your download will get messed up.</span></section>
 """
+
+def getReadableByteSize(num, suffix='B') -> str:
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Y', suffix)
+
+def getTimeStampString(tSec: float) -> str:
+    tObj = dt.datetime.fromtimestamp(tSec)
+    tStr = dt.datetime.strftime(tObj, '%Y-%m-%d %H:%M:%S')
+    return tStr
+
+def getIconClassForFilename(fName):
+    fileExt = Path(fName).suffix
+    fileExt = fileExt[1:] if fileExt.startswith(".") else fileExt
+    fileTypes = ["aac", "ai", "bmp", "cs", "css", "csv", "doc", "docx", "exe", "gif", "heic", "html", "java", "jpg", "js", "json", "jsx", "key", "m4p", "md", "mdx", "mov", "mp3",
+                 "mp4", "otf", "pdf", "php", "png", "pptx", "psd", "py", "raw", "rb", "sass", "scss", "sh", "sql", "svg", "tiff", "tsx", "ttf", "txt", "wav", "woff", "xlsx", "xml", "yml"]
+    fileIconClass = f"bi bi-filetype-{fileExt}" if fileExt in fileTypes else "bi bi-file-earmark"
+    return fileIconClass
 
 def re_verfiy(paused, resumed, client, hash_id):
 
@@ -242,6 +267,37 @@ def set_priority(id_):
         else:
             LOGGER.info(f"Verification Failed! Report! Gid: {id_}")
     return list_torrent_contents(id_)
+    
+@app.route('/downloads/', defaults={'reqPath': ''})
+@app.route('/downloads/<path:reqPath>')
+def getFiles(reqPath):
+    # Join the base and the requested path
+    # could have done os.path.join, but safe_join ensures that files are not fetched from parent folders of the base folder
+    absPath = safe_join(FolderPath, reqPath)
+
+    # Return 404 if path doesn't exist
+    if not os.path.exists(absPath):
+        return abort(404)
+
+    # Check if path is a file and serve
+    if os.path.isfile(absPath):
+        return send_file(absPath)
+
+    # Show directory contents
+    def fObjFromScan(x):
+        fileStat = x.stat()
+        # return file information for rendering
+        return {'name': x.name,
+                'fIcon': "bi bi-folder-fill" if os.path.isdir(x.path) else getIconClassForFilename(x.name),
+                'relPath': os.path.relpath(x.path, FolderPath).replace("\\", "/"),
+                'mTime': getTimeStampString(fileStat.st_mtime),
+                'size': getReadableByteSize(fileStat.st_size)}
+    fileObjs = [fObjFromScan(x) for x in os.scandir(absPath)]
+    # get parent directory url
+    parentFolderPath = os.path.relpath(
+        Path(absPath).parents[0], FolderPath).replace("\\", "/")
+    return render_template('files.html.j2', data={'files': fileObjs,
+                                                 'parentFolder': parentFolderPath})
 
 @app.route('/')
 def homepage():

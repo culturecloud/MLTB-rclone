@@ -21,13 +21,12 @@ START = 0
 STATE = 'view'
 
 default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
-                  'DOWNLOAD_DIR': '/usr/src/app/downloads/',  
+                  'DOWNLOAD_DIR': '/culturecloud/mltb/downloads/',  
                   'UPSTREAM_BRANCH': 'master',
                   'STATUS_UPDATE_INTERVAL': 10,
                   'LEECH_SPLIT_SIZE': TG_MAX_FILE_SIZE,
                   'SEARCH_LIMIT': 0,
-                  'SERVER_PORT': 81,
-                  'QB_SERVER_PORT': 80}
+                  'SERVER_PORT': 80}
 
 async def handle_ownerset(client, message):
     text, buttons= get_env_menu()
@@ -184,15 +183,10 @@ async def ownerset_callback(client, callback_query):
                 if DATABASE_URL:
                     DbManager().update_aria2('bt-stop-timeout', '0')
             elif data[3] == 'BASE_URL':
-                srun(["pkill", "-9", "-f", "gunicorn web.wserver:app"])
-            elif data[3] == 'QB_BASE_URL':
-                srun(["pkill", "-9", "-f", "gunicorn qbitweb.wserver:app"])    
+                srun(["pkill", "-9", "-f", "gunicorn"])
             elif data[3] == 'SERVER_PORT':
-                srun(["pkill", "-9", "-f", f"gunicorn web.wserver:app"])
-                Popen("gunicorn web.wserver:app --bind 0.0.0.0:81", shell=True)
-            elif data[3] == 'QB_SERVER_PORT':
-                srun(["pkill", "-9", "-f", f"gunicorn qbitweb.wserver:app"])
-                Popen("gunicorn qbitweb.wserver:app --bind 0.0.0.0:80", shell=True)
+                srun(["pkill", "-9", "-f", "gunicorn"])
+                Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
             await query.answer("Reseted")    
             config_dict[data[3]] = value
             if DATABASE_URL:
@@ -373,7 +367,7 @@ async def start_env_listener(client, query, user_id, key):
                     elif key == 'SERVER_PORT':
                         value = int(value)
                         srun(["pkill", "-9", "-f", "gunicorn"])
-                        Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{value}", shell=True)
+                        Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
                     elif key == 'EXTENSION_FILTER':
                         fx = value.split()
                         GLOBAL_EXTENSION_FILTER.clear()

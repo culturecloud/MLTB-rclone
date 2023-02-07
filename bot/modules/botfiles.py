@@ -181,28 +181,16 @@ async def load_config():
      EQUAL_SPLITS = environ.get('EQUAL_SPLITS', '')
      EQUAL_SPLITS = EQUAL_SPLITS.lower() == 'true'
 
-     SERVER_PORT = environ.get('SERVER_PORT', '')
-     SERVER_PORT = 81 if len(SERVER_PORT) == 0 else int(SERVER_PORT)
+     SERVER_PORT = environ.get('SERVER_PORT', '') or environ.get('PORT')
+     SERVER_PORT = 80 if len(SERVER_PORT) == 0 else int(SERVER_PORT)
      
      BASE_URL = environ.get('BASE_URL', '').rstrip("/")
      if len(BASE_URL) == 0:
           BASE_URL = ''
-          srun(["pkill", "-9", "-f", f"gunicorn web.wserver:app"])
+          srun(["pkill", "-9", "-f", "gunicorn"])
      else:
-          srun(["pkill", "-9", "-f", f"gunicorn web.wserver:app"])
-          Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{SERVER_PORT}", shell=True)
-
-     QB_SERVER_PORT = environ.get('QB_SERVER_PORT', '')
-     if len(QB_SERVER_PORT) == 0:
-          QB_SERVER_PORT = 80
-     
-     QB_BASE_URL = environ.get('QB_BASE_URL', '').rstrip("/")
-     if len(QB_BASE_URL) == 0:
-          QB_BASE_URL = ''
-          srun(["pkill", "-9", "-f", f"gunicorn qbitweb.wserver:app"])
-     else:
-          srun(["pkill", "-9", "-f", f"gunicorn qbitweb.wserver:app"])
-          Popen(f"gunicorn qbitweb.wserver:app --bind 0.0.0.0:{QB_SERVER_PORT}", shell=True)
+          srun(["pkill", "-9", "-f", "gunicorn"])
+          Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
 
      UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
      if len(UPSTREAM_REPO) == 0:
@@ -270,8 +258,6 @@ async def load_config():
                          'OWNER_ID': OWNER_ID,
                          'REMOTE_SELECTION': REMOTE_SELECTION,
                          'PARALLEL_TASKS': PARALLEL_TASKS,
-                         'QB_BASE_URL': QB_BASE_URL,
-                         'QB_SERVER_PORT': QB_SERVER_PORT,
                          'SEARCH_PLUGINS': SEARCH_PLUGINS,
                          'SEARCH_API_LINK': SEARCH_API_LINK,
                          'SEARCH_LIMIT': SEARCH_LIMIT,

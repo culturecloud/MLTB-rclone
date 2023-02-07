@@ -237,12 +237,12 @@ def bt_selection_buttons(id_: str):
             break
 
     buttons = ButtonMaker()
-    QB_BASE_URL = config_dict['QB_BASE_URL']
+    BASE_URL = config_dict['BASE_URL']
     if config_dict['WEB_PINCODE']:
-        buttons.url_buildbutton("Select Files", f"{QB_BASE_URL}/app/files/{id_}")
+        buttons.url_buildbutton("Select Files", f"{BASE_URL}/app/files/{id_}")
         buttons.cb_buildbutton("Pincode", f"btsel pin {gid} {pincode}")
     else:
-        buttons.url_buildbutton("Select Files", f"{QB_BASE_URL}/app/files/{id_}?pin_code={pincode}")
+        buttons.url_buildbutton("Select Files", f"{BASE_URL}/app/files/{id_}?pin_code={pincode}")
     buttons.cb_buildbutton("Done Selecting", f"btsel done {gid} {id_}")
     return buttons.build_menu(2)
 

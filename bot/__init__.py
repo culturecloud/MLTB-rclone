@@ -208,26 +208,20 @@ SERVER_SIDE = SERVER_SIDE.lower() == 'true'
 
 CMD_INDEX = environ.get('CMD_INDEX', '')
 
-SERVER_PORT = environ.get('SERVER_PORT', '')
+SERVER_PORT = environ.get('SERVER_PORT', '') or environ.get('PORT', '')
 if len(SERVER_PORT) == 0:
-    SERVER_PORT = 81
+    SERVER_PORT = 80
 else:
     SERVER_PORT = int(SERVER_PORT)
-
-QB_SERVER_PORT = environ.get('QB_SERVER_PORT', '') or environ.get('PORT', '')
-if len(QB_SERVER_PORT) == 0:
-    QB_SERVER_PORT = 80
-else:
-    QB_SERVER_PORT = int(QB_SERVER_PORT)
     
 if 'RAILWAY_STATIC_URL' in environ:
-    BASE_URL = QB_BASE_URL = f"https://{environ.get('RAILWAY_STATIC_URL')}"
+    BASE_URL = f"https://{environ.get('RAILWAY_STATIC_URL')}"
 elif 'RENDER_EXTERNAL_URL' in environ:
-    BASE_URL = QB_BASE_URL = environ.get('RENDER_EXTERNAL_URL')
-elif 'BASE_URL' in environ or 'QB_BASE_URL' in environ:
-    BASE_URL = QB_BASE_URL = environ.get('BASE_URL').rstrip("/") or environ.get('QB_BASE_URL').rstrip("/")
+    BASE_URL = environ.get('RENDER_EXTERNAL_URL')
+elif 'BASE_URL' in environ:
+    BASE_URL = environ.get('BASE_URL').rstrip("/")
 else:
-    log_warning('BASE_URL or QB_BASE_URL not provided! You will not be able to use local mirror or torrent selection')
+    log_warning('BASE_URL not provided! You will not be able to use local mirror or torrent selection')
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
@@ -330,8 +324,6 @@ if not config_dict:
                    'MULTI_RCLONE_CONFIG': MULTI_RCLONE_CONFIG, 
                    'OWNER_ID': OWNER_ID,
                    'PARALLEL_TASKS': PARALLEL_TASKS,
-                   'QB_BASE_URL': QB_BASE_URL,
-                   'QB_SERVER_PORT': QB_SERVER_PORT,
                    'REMOTE_SELECTION': REMOTE_SELECTION,
                    'SEARCH_PLUGINS': SEARCH_PLUGINS,
                    'SERVER_SIDE': SERVER_SIDE,
@@ -354,9 +346,8 @@ if not config_dict:
                    'WEB_PINCODE': WEB_PINCODE}
 
 if BASE_URL:
-    #Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=/dev/null"])
-    Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{QB_SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=/dev/null"])
-    LOGGER.info(f"HTTP server started at port {QB_SERVER_PORT}")
+    Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+    LOGGER.info(f"HTTP server started at port {SERVER_PORT}")
 
 srun(["qbittorrent-nox", "-d", "--profile=."])
 if not ospath.exists('.netrc'):
