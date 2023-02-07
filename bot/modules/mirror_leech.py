@@ -109,7 +109,7 @@ async def mirror_leech(client, message, isZip=False, extract=False, isLeech=Fals
 
     reply_message= message.reply_to_message
     if reply_message is not None:
-        listener= MirrorLeechListener(message, tag, user_id, isZip=isZip, isMultiZip=multiZip, extract=extract, pswd=pswd, isLeech=isLeech)
+        listener= MirrorLeechListener(message, tag, user_id, isZip=isZip, isMultiZip=multiZip, extract=extract, pswd=pswd, select=select, isLeech=isLeech)
         file = reply_message.document or reply_message.video or reply_message.audio or reply_message.photo or None
         if reply_message.from_user.username:
             tag = f"@{reply_message.from_user.username}"
