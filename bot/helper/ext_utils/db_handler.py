@@ -1,7 +1,7 @@
 from os import path as ospath, makedirs
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
-from bot import DATABASE_URL, user_data, rss_dict, LOGGER, bot_id, config_dict, aria2_options, qbit_options
+from bot import DATABASE_URL, user_data, LOGGER, bot_id, config_dict, aria2_options, qbit_options
 
 class DbManager:
     def __init__(self):
@@ -44,14 +44,6 @@ class DbManager:
                     row['thumb'] = path
                 user_data[uid] = row
             LOGGER.info("Users data has been imported from Database")
-        # Rss Data
-        if self.__db.rss[bot_id].find_one():
-            rows = self.__db.rss[bot_id].find({})  # return a dict ==> {_id, link, last_feed, last_name, filters}
-            for row in rows:
-                title = row['_id']
-                del row['_id']
-                rss_dict[title] = row
-            LOGGER.info("Rss data has been imported from Database.")
         self.__conn.close()
 
     def update_config(self, dict_):
@@ -102,18 +94,6 @@ class DbManager:
         else:
             image_bin = ''
         self.__db.users.update_one({'_id': user_id}, {'$set': {'thumb': image_bin}}, upsert=True)
-        self.__conn.close()
-
-    def rss_update(self, title):
-        if self.__err:
-            return
-        self.__db.rss[bot_id].update_one({'_id': title}, {'$set': rss_dict[title]}, upsert=True)
-        self.__conn.close()
-
-    def rss_delete(self, title):
-        if self.__err:
-            return
-        self.__db.rss[bot_id].delete_one({'_id': title})
         self.__conn.close()
 
     def trunc_table(self, name):

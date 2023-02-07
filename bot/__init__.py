@@ -1,5 +1,5 @@
-__version__ = "4.0"
-__author__ = "Sam-Max"
+__version__ = "4.0-freepaas"
+__author__ = "Sam-Max & Culture Cloud"
 
 from asyncio import Lock
 from asyncio import Queue
@@ -26,8 +26,8 @@ LOGGER = getLogger(__name__)
 load_dotenv('config.env', override=True)
 
 basicConfig(level= INFO,
-    format= "%(asctime)s %(levelname)s %(threadName)s %(name)s %(message)s",
-    handlers=[StreamHandler(), FileHandler("botlog.txt")])
+    format= "[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s",
+    handlers=[StreamHandler(), FileHandler("log.txt")])
 
 def get_client():
     return qbitClient(host="localhost", port=8090)
@@ -52,22 +52,8 @@ status_dict = {}
 # Value: telegram.Message
 status_reply_dict = {}
 
-# key: rss_title
-# value: [rss_feed, last_link, last_title, filter]
-rss_dict = {}
-
 m_queue = Queue()
 l_queue = Queue()
-
-if ospath.exists('pyrogram.session'):
-    osremove('pyrogram.session')
-if ospath.exists('pyrogram.session-journal'):
-    osremove('pyrogram.session-journal')
-    
-if ospath.exists('rss_session.session'):
-    osremove('rss_session.session')
-if ospath.exists('rss_session.session-journal'):
-    osremove('rss_session.session-journal')
 
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
 if len(BOT_TOKEN) == 0:
@@ -206,18 +192,6 @@ VIEW_LINK = VIEW_LINK.lower() == 'true'
 LOCAL_MIRROR = environ.get('LOCAL_MIRROR', '')
 LOCAL_MIRROR = LOCAL_MIRROR.lower() == 'true'
 
-RC_INDEX_USER = environ.get('RC_INDEX_USER', '')
-RC_INDEX_USER = 'admin' if len(RC_INDEX_USER) == 0 else RC_INDEX_USER
-
-RC_INDEX_PASS= environ.get('RC_INDEX_PASS', '')
-RC_INDEX_PASS = 'admin' if len(RC_INDEX_PASS) == 0 else RC_INDEX_PASS
-
-RC_INDEX_URL = environ.get('RC_INDEX_URL', '')
-RC_INDEX_URL = '' if len(RC_INDEX_URL) == 0 else RC_INDEX_URL
-
-RC_INDEX_PORT = environ.get('RC_INDEX_PORT', '')
-RC_INDEX_PORT= 8080 if len(RC_INDEX_PORT) == 0 else int(RC_INDEX_PORT)
-
 USE_SERVICE_ACCOUNTS = environ.get('USE_SERVICE_ACCOUNTS', '')
 USE_SERVICE_ACCOUNTS = USE_SERVICE_ACCOUNTS.lower() == 'true'
 
@@ -234,33 +208,26 @@ SERVER_SIDE = SERVER_SIDE.lower() == 'true'
 
 CMD_INDEX = environ.get('CMD_INDEX', '')
 
-RSS_CHAT_ID = environ.get('RSS_CHAT_ID', '')
-RSS_CHAT_ID = '' if len(RSS_CHAT_ID) == 0 else int(RSS_CHAT_ID)
-
-RSS_DELAY = environ.get('RSS_DELAY', '')
-RSS_DELAY = 900 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
-
-RSS_COMMAND = environ.get('RSS_COMMAND', '')
-if len(RSS_COMMAND) == 0:
-    RSS_COMMAND = ''
-
-BASE_URL = environ.get('BASE_URL', '').rstrip("/")
-if len(BASE_URL) == 0:
-    LOGGER.warning('BASE_URL not provided!')
-    BASE_URL = ''
-
 SERVER_PORT = environ.get('SERVER_PORT', '')
 if len(SERVER_PORT) == 0:
     SERVER_PORT = 81
+else:
+    SERVER_PORT = int(SERVER_PORT)
 
-QB_BASE_URL = environ.get('QB_BASE_URL', '').rstrip("/")
-if len(QB_BASE_URL) == 0:
-    LOGGER.warning('QB_BASE_URL not provided!')
-    QB_BASE_URL = '' 
-
-QB_SERVER_PORT = environ.get('QB_SERVER_PORT', '')
+QB_SERVER_PORT = environ.get('QB_SERVER_PORT', '') or environ.get('PORT', '')
 if len(QB_SERVER_PORT) == 0:
     QB_SERVER_PORT = 80
+else:
+    QB_SERVER_PORT = int(QB_SERVER_PORT)
+    
+if 'RAILWAY_STATIC_URL' in environ:
+    BASE_URL = QB_BASE_URL = f"https://{environ.get('RAILWAY_STATIC_URL')}"
+elif 'RENDER_EXTERNAL_URL' in environ:
+    BASE_URL = QB_BASE_URL = environ.get('RENDER_EXTERNAL_URL')
+elif 'BASE_URL' in environ or 'QB_BASE_URL' in environ:
+    BASE_URL = QB_BASE_URL = environ.get('BASE_URL').rstrip("/") or environ.get('QB_BASE_URL').rstrip("/")
+else:
+    log_warning('BASE_URL or QB_BASE_URL not provided! You will not be able to use local mirror or torrent selection')
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
@@ -311,7 +278,7 @@ if len(LEECH_LOG) != 0:
 BOT_PM = environ.get('BOT_PM', '')
 BOT_PM = BOT_PM.lower() == 'true'
 
-bot = Client(name="pyrogram", api_id=TELEGRAM_API_ID, api_hash=TELEGRAM_API_HASH, bot_token=BOT_TOKEN)
+bot = Client(name="pyrogram", api_id=TELEGRAM_API_ID, api_hash=TELEGRAM_API_HASH, bot_token=BOT_TOKEN, in_memory=True)
 Conversation(bot) 
 LOGGER.info("Creating Pyrogram client")
 
@@ -327,13 +294,6 @@ if len(USER_SESSION_STRING) != 0:
                 LOGGER.error("You must set LEECH_LOG for uploads. Exiting Now...")
                 app.stop()
                 exit(1)
-
-RSS_USER_SESSION_STRING = environ.get('RSS_USER_SESSION_STRING', '')
-if len(RSS_USER_SESSION_STRING) == 0:
-    rss_session = None
-else:
-    LOGGER.info("Creating client from RSS_USER_SESSION_STRING")
-    rss_session = Client(name='rss_session', api_id=TELEGRAM_API_ID, api_hash=TELEGRAM_API_HASH, session_string=RSS_USER_SESSION_STRING, no_updates=True)
 
 TG_MAX_FILE_SIZE= 4194304000 if IS_PREMIUM_USER else 2097152000
 LEECH_SPLIT_SIZE = environ.get('LEECH_SPLIT_SIZE', '')
@@ -373,20 +333,12 @@ if not config_dict:
                    'QB_BASE_URL': QB_BASE_URL,
                    'QB_SERVER_PORT': QB_SERVER_PORT,
                    'REMOTE_SELECTION': REMOTE_SELECTION,
-                   'RSS_USER_SESSION_STRING': RSS_USER_SESSION_STRING,
-                   'RSS_CHAT_ID': RSS_CHAT_ID,
-                   'RSS_COMMAND': RSS_COMMAND,
-                   'RSS_DELAY': RSS_DELAY,
                    'SEARCH_PLUGINS': SEARCH_PLUGINS,
                    'SERVER_SIDE': SERVER_SIDE,
                    'SEARCH_API_LINK': SEARCH_API_LINK,
                    'SEARCH_LIMIT': SEARCH_LIMIT,
                    'SERVER_PORT': SERVER_PORT,
                    'SERVICE_ACCOUNTS_REMOTE': SERVICE_ACCOUNTS_REMOTE,
-                   'RC_INDEX_URL': RC_INDEX_URL,
-                   'RC_INDEX_PORT': RC_INDEX_PORT,
-                   'RC_INDEX_USER':RC_INDEX_USER,
-                   'RC_INDEX_PASS': RC_INDEX_PASS,
                    'STATUS_LIMIT': STATUS_LIMIT,
                    'STATUS_UPDATE_INTERVAL': STATUS_UPDATE_INTERVAL,
                    'SUDO_USERS': SUDO_USERS,
@@ -401,15 +353,18 @@ if not config_dict:
                    'VIEW_LINK': VIEW_LINK,
                    'WEB_PINCODE': WEB_PINCODE}
 
-Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{SERVER_PORT}", shell=True)
-Popen(f"gunicorn qbitweb.wserver:app --bind 0.0.0.0:{QB_SERVER_PORT}", shell=True)
+if BASE_URL:
+    #Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=/dev/null"])
+    Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{QB_SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=/dev/null"])
+    LOGGER.info(f"HTTP server started at port {QB_SERVER_PORT}")
+
 srun(["qbittorrent-nox", "-d", "--profile=."])
 if not ospath.exists('.netrc'):
     srun(["touch", ".netrc"])
 srun(["cp", ".netrc", "/root/.netrc"])
 srun(["chmod", "600", ".netrc"])
-srun(["chmod", "+x", "aria.sh"])
-srun("./aria.sh", shell=True)
+srun(["bash", "aria2/tracker.sh"])
+srun(["aria2c", "--conf-path=aria2/aria2.conf"])
 sleep(0.5)
 if ospath.exists('accounts.zip'):
     if ospath.exists('accounts'):

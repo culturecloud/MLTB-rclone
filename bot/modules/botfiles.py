@@ -101,10 +101,6 @@ async def load_config():
      if len(SEARCH_API_LINK) == 0:
           SEARCH_API_LINK = ''
 
-     RSS_COMMAND = environ.get('RSS_COMMAND', '')
-     if len(RSS_COMMAND) == 0:
-          RSS_COMMAND = ''
-
      SEARCH_PLUGINS = environ.get('SEARCH_PLUGINS', '')
      if len(SEARCH_PLUGINS) == 0:
           SEARCH_PLUGINS = ''
@@ -142,16 +138,8 @@ async def load_config():
 
      PARALLEL_TASKS = environ.get('PARALLEL_TASKS', '')
      PARALLEL_TASKS = "" if len(PARALLEL_TASKS) == 0 else int(PARALLEL_TASKS)
-
-     RSS_CHAT_ID = environ.get('RSS_CHAT_ID', '')
-     RSS_CHAT_ID = '' if len(RSS_CHAT_ID) == 0 else int(RSS_CHAT_ID)
-
-     RSS_DELAY = environ.get('RSS_DELAY', '')
-     RSS_DELAY = 900 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
-
+     
      USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
-
-     RSS_USER_SESSION_STRING = environ.get('RSS_USER_SESSION_STRING', '')
 
      TORRENT_TIMEOUT = environ.get('TORRENT_TIMEOUT', '')
      downloads = aria2.get_downloads()
@@ -253,18 +241,6 @@ async def load_config():
      LOCAL_MIRROR = environ.get('LOCAL_MIRROR', '')
      LOCAL_MIRROR = LOCAL_MIRROR.lower() == 'true'
 
-     RC_INDEX_USER = environ.get('RC_INDEX_USER', '')
-     RC_INDEX_USER = 'admin' if len(RC_INDEX_USER) == 0 else RC_INDEX_USER
-
-     RC_INDEX_PASS= environ.get('RC_INDEX_PASS', '')
-     RC_INDEX_PASS = 'admin' if len(RC_INDEX_PASS) == 0 else RC_INDEX_PASS
-
-     RC_INDEX_URL = environ.get('RC_INDEX_URL', '')
-     RC_INDEX_URL = '' if len(RC_INDEX_URL) == 0 else RC_INDEX_URL
-
-     RC_INDEX_PORT = environ.get('RC_INDEX_PORT', '')
-     RC_INDEX_PORT= 8080 if len(RC_INDEX_PORT) == 0 else int(RC_INDEX_PORT)
-
      CMD_INDEX = environ.get('CMD_INDEX', '')
 
      config_dict.update({'AS_DOCUMENT': AS_DOCUMENT,
@@ -296,20 +272,12 @@ async def load_config():
                          'PARALLEL_TASKS': PARALLEL_TASKS,
                          'QB_BASE_URL': QB_BASE_URL,
                          'QB_SERVER_PORT': QB_SERVER_PORT,
-                         'RSS_USER_SESSION_STRING': RSS_USER_SESSION_STRING,
-                         'RSS_CHAT_ID': RSS_CHAT_ID,
-                         'RSS_COMMAND': RSS_COMMAND,
-                         'RSS_DELAY': RSS_DELAY,
                          'SEARCH_PLUGINS': SEARCH_PLUGINS,
                          'SEARCH_API_LINK': SEARCH_API_LINK,
                          'SEARCH_LIMIT': SEARCH_LIMIT,
                          'SERVER_PORT': SERVER_PORT,
                          'SERVICE_ACCOUNTS_REMOTE': SERVICE_ACCOUNTS_REMOTE,
                          'SERVER_SIDE': SERVER_SIDE,
-                         'RC_INDEX_URL': RC_INDEX_URL,
-                         'RC_INDEX_PORT': RC_INDEX_PORT,
-                         'RC_INDEX_USER':RC_INDEX_USER,
-                         'RC_INDEX_PASS': RC_INDEX_PASS,
                          'STATUS_LIMIT': STATUS_LIMIT,
                          'STATUS_UPDATE_INTERVAL': STATUS_UPDATE_INTERVAL,
                          'SUDO_USERS': SUDO_USERS,

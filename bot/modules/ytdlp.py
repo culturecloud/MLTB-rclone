@@ -243,8 +243,7 @@ async def select_format(client, callback_query):
         return await editMessage("This is an old task", message)
     uid = task_info[1]
     if user_id != uid and not CustomFilters._owner_query(user_id):
-        await query.answer(text="This task is not for you!", show_alert=True)
-        return
+        return await query.answer(text="This task is not for you!", show_alert=True)
     elif data[2] == "dict":
         await query.answer()
         b_name = data[3]
@@ -252,10 +251,9 @@ async def select_format(client, callback_query):
         return
     elif data[2] == "back":
         await query.answer()
-        await editMessage('Choose Video Quality:', message, task_info[3])
-        return
+        return await editMessage('Choose Video Quality:', message, task_info[3])
     elif data[2] == "mp3":
-        await query.answer()
+        query.answer()
         playlist = len(data) == 4
         await _mp3_subbuttons(task_id, message, playlist)
         return
@@ -280,7 +278,6 @@ async def select_format(client, callback_query):
                 qual = task_info[6][b_name][tbr][1]
         ydl_hp = YoutubeDLHelper(listener)
         LOGGER.info(f"Downloading with YT-DLP: {link}")
-        await message.delete()
         await ydl_hp.add_download(link, f'{DOWNLOAD_DIR}{task_id}', name, qual, playlist, opt)
     del listener_dict[task_id]
 

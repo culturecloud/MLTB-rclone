@@ -4,7 +4,7 @@
 from asyncio import sleep
 from os import remove
 from time import time
-from bot import LOGGER, bot, Interval, rss_session, config_dict, status_reply_dict_lock, status_reply_dict
+from bot import LOGGER, bot, Interval, config_dict, status_reply_dict_lock, status_reply_dict
 from pyrogram.errors.exceptions import FloodWait, MessageNotModified
 from pyrogram.enums.parse_mode import ParseMode
 from bot.helper.ext_utils.bot_utils import get_readable_message, setInterval
@@ -62,29 +62,6 @@ async def editMessage(text: str, message, reply_markup=None):
     except Exception as e:
         LOGGER.error(str(e))
         return str(e)
-
-async def sendRss(text: str):
-    if not rss_session:
-        try:
-            return await bot.send_message(config_dict['RSS_CHAT_ID'], text, disable_web_page_preview=True)
-        except FloodWait as e:
-            LOGGER.warning(str(e))
-            await sleep(e.value * 1.5)
-            return await sendRss(text)
-        except Exception as e:
-            LOGGER.error(str(e))
-            return
-    else:
-        try:
-            with rss_session:
-                return rss_session.send_message(config_dict['RSS_CHAT_ID'], text, disable_web_page_preview=True)
-        except FloodWait as e:
-            LOGGER.warning(str(e))
-            await sleep(e.value * 1.5)
-            return await sendRss(text)
-        except Exception as e:
-            LOGGER.error(str(e))
-            return
             
 async def deleteMessage(message):
     try:

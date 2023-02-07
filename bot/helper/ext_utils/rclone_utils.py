@@ -4,6 +4,7 @@ from re import escape
 from os import path as ospath
 from asyncio.subprocess import PIPE, create_subprocess_exec
 from bot import LOGGER, OWNER_ID, config_dict, remotes_data
+from bot.helper.ext_utils.bot_commands import BotCommands
 from bot.helper.ext_utils.filters import CustomFilters
 from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage
 from bot.helper.ext_utils.misc_utils import ButtonMaker
@@ -34,7 +35,7 @@ async def is_rclone_config(user_id, message, isLeech=False):
             if isLeech:
                 return True
             else:
-                await sendMessage("Send a rclone config file, use /botfiles", message)
+                await sendMessage(f"Send a rclone config file, use /{BotCommands.BotFilesCommand}", message)
                 return False
     else:
         path= ospath.join("users", "grclone", "rclone.conf")

@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
 
-basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[FileHandler("botlog.txt"), StreamHandler()],
+basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
+                    handlers=[FileHandler("log.txt"), StreamHandler()],
                     level=INFO)
 
 LOGGER = getLogger(__name__)

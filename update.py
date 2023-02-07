@@ -7,14 +7,24 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from subprocess import run as srun
 
-if ospath.exists('botlog.txt'):
-    with open('botlog.txt', 'r+') as f:
+if ospath.exists('log.txt'):
+    with open('log.txt', 'r+') as f:
         f.truncate(0)
 
-basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
                     handlers=[FileHandler('log.txt'), StreamHandler()],
                     level=INFO)
 
+CONFIG_ENV = environ.get('CONFIG_ENV', None)
+if CONFIG_ENV:
+    log_info("CONFIG_ENV variable found! Downloading config file ...")
+    download_file = srun(["curl", "-sL", f"{CONFIG_ENV}", "-o", "config.env"])
+    if download_file.returncode == 0:
+        log_info("Config file has been downloaded as 'config.env'")
+    else:
+        log_error("Something went wrong while downloading config file! please recheck the CONFIG_ENV variable")
+        exit(1)
+        
 load_dotenv('config.env', override=True)
 
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
