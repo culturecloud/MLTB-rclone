@@ -59,7 +59,7 @@ async def ping(client, message):
 
 async def get_log(client, message):
     current_time = strftime("%d%m%y-%H%M%S", localtime())
-    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}.txt")
+    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}")
     
 help_string = f'''
 <u>**Mirror**</u>
@@ -151,6 +151,6 @@ bot.start()
 if app is not None:
     app.start()
 
-botloop.add_signal_handler(SIGINT, graceful_exit())
+botloop.add_signal_handler(SIGTERM, graceful_exit)
 botloop.run_until_complete(main())
 botloop.run_forever()
