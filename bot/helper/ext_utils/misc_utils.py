@@ -3,7 +3,7 @@ from os import makedirs, mkdir, path as ospath, remove as osremove
 from shutil import rmtree
 from bot.helper.ext_utils.zip_utils import get_path_size
 from magic import Magic
-from bot import bot, config_dict, DOWNLOAD_DIR, LOGGER, TG_MAX_FILE_SIZE, aria2, get_client, status_dict, status_dict_lock
+from bot import bot, app, config_dict, DOWNLOAD_DIR, LOGGER, TG_MAX_FILE_SIZE, aria2, get_client, status_dict, status_dict_lock
 from json import loads as jsnloads
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from subprocess import Popen, check_output
@@ -43,15 +43,17 @@ def clean_target(path: str):
             except:
                 pass
 
-def clean_all():
+def exit_cleanup():
     aria2.remove_all(True)
     get_client().torrents_delete(torrent_hashes="all")
+    bot.stop()
+    if app is not None:
+        app.stop()
     if not config_dict['LOCAL_MIRROR']:
         try:
             rmtree(DOWNLOAD_DIR)
         except:
             pass
-    bot.stop()
 
 def start_cleanup():
     if not config_dict['LOCAL_MIRROR']:

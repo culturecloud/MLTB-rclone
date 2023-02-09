@@ -1,3 +1,4 @@
+from signal import signal, SIGTERM
 from time import time, localtime, strftime
 from bot import Interval, QbInterval, bot, botloop, app
 from os import path as ospath, remove as osremove, execl as osexecl
@@ -8,7 +9,7 @@ from subprocess import run as srun
 from bot.helper.ext_utils.bot_commands import BotCommands
 from bot.helper.ext_utils.filters import CustomFilters
 from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage
-from bot.helper.ext_utils.misc_utils import ButtonMaker, clean_all, start_cleanup
+from bot.helper.ext_utils.misc_utils import ButtonMaker, exit_cleanup, start_cleanup
 from bot.helper.ext_utils import db_handler
 from bot.modules import batch, cancel, botfiles, copy, leech, mirror_leech, myfilesset, owner_settings, cloudselect, search, myfiles, stats, status, clone, storage, cleanup, user_settings, ytdlp, shell, exec, bt_select, sync, bisync, rss
 
@@ -37,7 +38,7 @@ async def restart(client, message):
     if QbInterval:
         QbInterval[0].cancel()
         QbInterval.clear()
-    clean_all()
+    exit_cleanup()
     srun(["pkill", "-9", "-f", "aria2c|rclone|qbittorrent-nox|ffmpeg"])
     srun(["python3", "update.py"])
     with open(".restartmsg", "w") as f:
@@ -99,6 +100,7 @@ help_string = f'''
 /{BotCommands.RestartCommand} - Restart & update the bot.
 
 <u>**Miscellaneous**</u>
+/{BotCommands.RssCommand} - Configure RSS feeds.
 /{BotCommands.SearchCommand} - Search for torrents.
 /{BotCommands.PingCommand} - Check bot response speed.
 /{BotCommands.StatsCommand} - Bot server stats.
@@ -137,7 +139,7 @@ async def main():
 bot.start()
 if app is not None:
     app.start()
-    
+
+botloop.add_signal_handler(SIGTERM, exit_cleanup())
 botloop.run_until_complete(main())
 botloop.run_forever()
-
