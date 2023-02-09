@@ -1,4 +1,4 @@
-from signal import signal, SIGTERM
+from signal import signal, SIGINT
 from time import time, localtime, strftime
 from bot import Interval, QbInterval, bot, botloop, app, LOGGER
 from os import path as ospath, remove as osremove, execl as osexecl
@@ -140,20 +140,19 @@ async def main():
     bot.add_handler(log_handler)
     bot.add_handler(ping_handler)
     bot.add_handler(help_handler)
-    
-def graceful_exit():
-    LOGGER.info("Stop signal recieved! Stopping gracefully...")
+
+bot.start()
+if app is not None:
+    app.start()
+
+try:
+    botloop.run_until_complete(main())
+    botloop.run_forever()
+except (KeyboardInterrupt, SystemExit) as e:
+    LOGGGER.warning(f'Received {type(e).__name__}, exiting...')
     exit_cleanup()
     bot.stop()
     if app is not None:
         app.stop()
     botloop.close()
     exit()
-
-bot.start()
-if app is not None:
-    app.start()
-
-botloop.add_signal_handler(SIGTERM, graceful_exit)
-botloop.run_until_complete(main())
-botloop.run_forever()
