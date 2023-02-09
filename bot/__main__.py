@@ -144,7 +144,11 @@ async def main():
 def graceful_exit():
     LOGGER.info("Stop signal recieved! Stopping gracefully...")
     exit_cleanup()
+    bot.stop()
+    if app is not None:
+        app.stop()
     botloop.close()
+    exit()
 
 bot.start()
 if app is not None:

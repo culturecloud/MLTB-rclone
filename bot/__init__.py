@@ -21,9 +21,9 @@ botloop = get_event_loop()
 
 botUptime = time()
 
-basicConfig(level= INFO,
-    format= "[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s",
-    handlers=[StreamHandler(), FileHandler("log.txt")])
+basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
+                        handlers=[FileHandler('log.txt'), StreamHandler()],
+                        level=INFO)
 
 LOGGER = getLogger(__name__)
 
