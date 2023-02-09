@@ -9,7 +9,7 @@ from asyncio import sleep
 from pyrogram.handlers import CallbackQueryHandler, MessageHandler
 from pyrogram.filters import regex, command
 from pyrogram import filters as pfilters
-from bot import DATABASE_URL, LOGGER, RSS_DELAY, bot, rss_dict, config_dict
+from bot import DATABASE_URL, LOGGER, RSS_DELAY, CMD_INDEX, bot, rss_dict, config_dict
 from bot.helper.ext_utils.bot_commands import BotCommands
 from bot.helper.ext_utils.filters import CustomFilters
 from bot.helper.ext_utils.message_utils import editMarkup, editMessage, sendMarkup, sendMessage, sendRss
@@ -293,7 +293,9 @@ async def rss_monitor():
                 except IndexError:
                     url = rss_d.entries[feed_count]['link']
                 if RSS_COMMAND := config_dict['RSS_COMMAND']:
-                    feed_msg = f"/{RSS_COMMAND.replace('/', '')} {url}"
+                    if CMD_INDEX:
+                        RSS_COMMAND = f"{RSS_COMMAND}{CMD_INDEX}"
+                    feed_msg = f"/{RSS_COMMAND} {url}"
                 else:
                     feed_msg = f"<b>Name: </b><code>{rss_d.entries[feed_count]['title'].replace('>', '').replace('<', '')}</code>\n\n"
                     feed_msg += f"<b>Link: </b><code>{url}</code>"
