@@ -49,7 +49,7 @@ async def restart(client, message):
         f.truncate(0)
         f.write(f"{restart_msg.chat.id}\n{restart_msg.id}\n")
     osexecl(executable, executable, "-m", "bot")
-    LOGGER.info("Bot restarte")
+    LOGGER.info("Bot restarted!")
 
 async def ping(client, message):
     start_time = int(round(time() * 1000))
@@ -59,7 +59,7 @@ async def ping(client, message):
 
 async def get_log(client, message):
     current_time = strftime("%d%m%y-%H%M%S", localtime())
-    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}")
+    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}.txt")
     
 help_string = f'''
 <u>**Mirror**</u>
@@ -151,6 +151,6 @@ bot.start()
 if app is not None:
     app.start()
 
-botloop.add_signal_handler(SIGTERM, lambda *_, **__: graceful_exit())
+botloop.add_signal_handler(SIGINT, graceful_exit())
 botloop.run_until_complete(main())
 botloop.run_forever()
