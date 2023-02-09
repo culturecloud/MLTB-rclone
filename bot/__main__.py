@@ -150,9 +150,10 @@ try:
     botloop.run_forever()
 except (KeyboardInterrupt, SystemExit) as e:
     LOGGGER.warning(f'Received {type(e).__name__}, exiting...')
+    raise SystemExit
+finally:
     exit_cleanup()
     bot.stop()
     if app is not None:
         app.stop()
     botloop.close()
-    exit()
