@@ -21,13 +21,15 @@ botloop = get_event_loop()
 
 botUptime = time()
 
-LOGGER = getLogger(__name__)
-
-load_dotenv('config.env', override=True)
-
 basicConfig(level= INFO,
     format= "[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s",
     handlers=[StreamHandler(), FileHandler("log.txt")])
+
+LOGGER = getLogger(__name__)
+
+LOGGER.info("Initializing the bot...")
+
+load_dotenv('config.env', override=True)
 
 def get_client():
     return qbitClient(host="localhost", port=8090)
@@ -435,4 +437,5 @@ else:
         if v in ["", "*"]:
             del qb_opt[k]
     qb_client.app_set_preferences(qb_opt)
-
+    
+LOGGER.info("Initialization finished! Starting main script")

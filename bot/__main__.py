@@ -31,7 +31,8 @@ The all-in-one Telegram bot which utilizes some of the world's most awesome & po
         await sendMarkup("Not Authorized user, deploy your own version", message, reply_markup)     
     
 async def restart(client, message):
-    restart_msg= await sendMessage("Restarting...", message) 
+    restart_msg= await sendMessage("Restarting...", message)
+    LOGGER.info("Restart command recieved! Restarting the bot...")
     if Interval:
         Interval[0].cancel()
         Interval.clear()
@@ -48,6 +49,7 @@ async def restart(client, message):
         f.truncate(0)
         f.write(f"{restart_msg.chat.id}\n{restart_msg.id}\n")
     osexecl(executable, executable, "-m", "bot")
+    LOGGER.info("Bot restarte")
 
 async def ping(client, message):
     start_time = int(round(time() * 1000))
