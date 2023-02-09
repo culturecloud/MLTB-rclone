@@ -69,10 +69,14 @@ bot_id = int(BOT_TOKEN.split(':', 1)[0])
 DATABASE_URL = environ.get('DATABASE_URL', '')
 if len(DATABASE_URL) == 0:
     DATABASE_URL = None
+    
+DATABASE_NAME = environ.get('DATABASE_NAME', '')
+if len(DATABASE_NAME) == 0:
+    DATABASE_NAME = 'RCMLTB'
 
 if DATABASE_URL:
     conn = MongoClient(DATABASE_URL)
-    db = conn.rcmltb
+    db = conn.DATABASE_NAME
     if config_dict := db.settings.config.find_one({'_id': bot_id}):  #return config dict (all env vars)
         del config_dict['_id']
         for key, value in config_dict.items():
@@ -319,6 +323,7 @@ if not config_dict:
                    'BOT_TOKEN': BOT_TOKEN,
                    'BOT_PM': BOT_PM,
                    'CMD_INDEX': CMD_INDEX,
+                   'DATABASE_NAME': DATABASE_NAME,
                    'DATABASE_URL': DATABASE_URL,
                    'DEFAULT_OWNER_REMOTE': DEFAULT_OWNER_REMOTE,
                    'DEFAULT_GLOBAL_REMOTE':DEFAULT_GLOBAL_REMOTE,

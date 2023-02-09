@@ -42,6 +42,10 @@ async def load_config():
      DATABASE_URL = environ.get('DATABASE_URL', '')
      if len(DATABASE_URL) == 0:
           DATABASE_URL = ''
+          
+     DATABASE_NAME = environ.get('DATABASE_NAME', '')
+     if len(DATABASE_NAME) == 0:
+         DATABASE_NAME = 'RCMLTB'
 
      DOWNLOAD_DIR = environ.get('DOWNLOAD_DIR', '')
      if len(DOWNLOAD_DIR) == 0:

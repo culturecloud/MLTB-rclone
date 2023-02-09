@@ -21,6 +21,7 @@ START = 0
 STATE = 'view'
 
 default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
+                  'DATABASE_NAME': 'RCMLTB',
                   'DOWNLOAD_DIR': '/culturecloud/mltb/downloads/',  
                   'UPSTREAM_BRANCH': 'master',
                   'STATUS_UPDATE_INTERVAL': 10,
@@ -139,7 +140,7 @@ async def ownerset_callback(client, callback_query):
     if data[1] == "env":
         if data[2] == "editenv" and STATE == 'edit':
             if data[3] in ['PARALLEL_TASKS', 'SUDO_USERS', 'ALLOWED_CHATS', 'USER_SESSION_STRING', 'AUTO_MIRROR', 'CMD_INDEX', 
-                          'TELEGRAM_API_HASH', 'TELEGRAM_API_ID', 'BOT_TOKEN', 'OWNER_ID', 'RSS_DELAY', 'DOWNLOAD_DIR', 'DATABASE_URL']:
+                          'TELEGRAM_API_HASH', 'TELEGRAM_API_ID', 'BOT_TOKEN', 'OWNER_ID', 'RSS_DELAY', 'DOWNLOAD_DIR', 'DATABASE_URL', 'DATABASE_NAME']:
                 await query.answer(text='Restart required for this to apply!', show_alert=True)
             else:
                 await query.answer()

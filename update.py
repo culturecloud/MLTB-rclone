@@ -37,10 +37,14 @@ bot_id = int(BOT_TOKEN.split(':', 1)[0])
 DATABASE_URL = environ.get('DATABASE_URL', '')
 if len(DATABASE_URL) == 0:
     DATABASE_URL = None
+    
+DATABASE_NAME = environ.get('DATABASE_NAME', '')
+if len(DATABASE_NAME) == 0:
+    DATABASE_NAME = 'RCMLTB'
 
 if DATABASE_URL is not None:
     conn = MongoClient(DATABASE_URL)
-    db = conn.rcmltb
+    db = conn.DATABASE_NAME
     if config_dict := db.settings.config.find_one({'_id': bot_id}):  #retrun config dict (all env vars)
         environ['UPSTREAM_REPO'] = config_dict['UPSTREAM_REPO']
         environ['UPSTREAM_BRANCH'] = config_dict['UPSTREAM_BRANCH']
