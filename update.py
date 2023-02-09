@@ -15,6 +15,8 @@ basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
                     handlers=[FileHandler('log.txt'), StreamHandler()],
                     level=INFO)
 
+log_info("Running updater script...")
+
 CONFIG_ENV = environ.get('CONFIG_ENV', None)
 if CONFIG_ENV:
     log_info("CONFIG_ENV variable found! Downloading config file ...")

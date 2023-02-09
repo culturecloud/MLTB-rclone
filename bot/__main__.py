@@ -151,6 +151,6 @@ bot.start()
 if app is not None:
     app.start()
 
-botloop.add_signal_handler(SIGTERM, graceful_exit())
+botloop.add_signal_handler(SIGTERM, lambda *_, **__: graceful_exit())
 botloop.run_until_complete(main())
 botloop.run_forever()
