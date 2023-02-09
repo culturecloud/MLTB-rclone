@@ -1,6 +1,6 @@
 from signal import signal, SIGTERM
 from time import time, localtime, strftime
-from bot import Interval, QbInterval, bot, botloop, app
+from bot import Interval, QbInterval, bot, botloop, app, LOGGER
 from os import path as ospath, remove as osremove, execl as osexecl
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
@@ -39,6 +39,9 @@ async def restart(client, message):
         QbInterval[0].cancel()
         QbInterval.clear()
     exit_cleanup()
+    bot.stop()
+    if app is not None:
+        app.stop()
     srun(["pkill", "-9", "-f", "aria2c|rclone|qbittorrent-nox|ffmpeg"])
     srun(["python3", "update.py"])
     with open(".restartmsg", "w") as f:
@@ -135,11 +138,17 @@ async def main():
     bot.add_handler(log_handler)
     bot.add_handler(ping_handler)
     bot.add_handler(help_handler)
+    
+def graceful_exit():
+    LOGGER.info("Stop signal recieved! Stopping gracefully...")
+    exit_cleanup()
+    botloop.close()
+    exit()
 
 bot.start()
 if app is not None:
     app.start()
 
-botloop.add_signal_handler(SIGTERM, exit_cleanup())
+botloop.add_signal_handler(SIGTERM, graceful_exit())
 botloop.run_until_complete(main())
 botloop.run_forever()
