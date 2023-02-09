@@ -35,6 +35,3 @@ RUN rm -rf /culturecloud/mltb/* \
     https://github.com/$DEPLOY_REPO /culturecloud/mltb/
     
 COPY . .
-
-ENTRYPOINT ["/tini", "--"]
-CMD ["bash", "start.sh"]
