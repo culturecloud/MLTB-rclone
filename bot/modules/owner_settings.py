@@ -25,6 +25,7 @@ default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
                   'UPSTREAM_BRANCH': 'master',
                   'STATUS_UPDATE_INTERVAL': 10,
                   'LEECH_SPLIT_SIZE': TG_MAX_FILE_SIZE,
+                  'RSS_DELAY': 900,
                   'SEARCH_LIMIT': 0,
                   'SERVER_PORT': 80}
 
@@ -138,7 +139,7 @@ async def ownerset_callback(client, callback_query):
     if data[1] == "env":
         if data[2] == "editenv" and STATE == 'edit':
             if data[3] in ['PARALLEL_TASKS', 'SUDO_USERS', 'ALLOWED_CHATS', 'USER_SESSION_STRING', 'AUTO_MIRROR', 'CMD_INDEX', 
-                          'TELEGRAM_API_HASH', 'TELEGRAM_API_ID', 'BOT_TOKEN', 'OWNER_ID', 'DOWNLOAD_DIR', 'DATABASE_URL']:
+                          'TELEGRAM_API_HASH', 'TELEGRAM_API_ID', 'BOT_TOKEN', 'OWNER_ID', 'RSS_DELAY', 'DOWNLOAD_DIR', 'DATABASE_URL']:
                 await query.answer(text='Restart required for this to apply!', show_alert=True)
             else:
                 await query.answer()
@@ -186,7 +187,7 @@ async def ownerset_callback(client, callback_query):
                 srun(["pkill", "-9", "-f", "gunicorn"])
             elif data[3] == 'SERVER_PORT':
                 srun(["pkill", "-9", "-f", "gunicorn"])
-                Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+                Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
             await query.answer("Reseted")    
             config_dict[data[3]] = value
             if DATABASE_URL:
@@ -367,7 +368,7 @@ async def start_env_listener(client, query, user_id, key):
                     elif key == 'SERVER_PORT':
                         value = int(value)
                         srun(["pkill", "-9", "-f", "gunicorn"])
-                        Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+                        Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
                     elif key == 'EXTENSION_FILTER':
                         fx = value.split()
                         GLOBAL_EXTENSION_FILTER.clear()

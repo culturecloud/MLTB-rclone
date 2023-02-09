@@ -230,7 +230,7 @@ class MirrorLeechListener:
             if config_dict['LOCAL_MIRROR']:
                 if BASE_URL:= config_dict['BASE_URL']:
                     buttons= ButtonMaker()
-                    server_url = f'{BASE_URL}:{SERVER_PORT}/downloads/'
+                    server_url = f'{BASE_URL}/downloads/{self.uid}'
                     buttons.url_buildbutton("🖥 Local Server", server_url)
                     size = get_readable_file_size(size)
                     msg = f"<b>Name: </b><code>{escape(name)}</code>\n\n<b>Size: </b>{size}"

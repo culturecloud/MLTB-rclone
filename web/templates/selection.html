@@ -1,0 +1,131 @@
+<html lang=en>
+<meta charset=UTF-8>
+<meta content="IE=edge" http-equiv=X-UA-Compatible>
+<meta content="width=device-width,initial-scale=1" name=viewport>
+<title>Torrent File Selector</title>
+<link href=https://telegra.ph/file/43af672249c94053356c7.jpg rel=icon type=image/jpg>
+<script crossorigin=anonymous integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" src=https://code.jquery.com/jquery-3.5.1.slim.min.js></script>
+<link href=https://fonts.googleapis.com rel=preconnect>
+<link href=https://fonts.gstatic.com rel=preconnect crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel=stylesheet>
+<link href=https://pro.fontawesome.com/releases/v5.10.0/css/all.css rel=stylesheet crossorigin=anonymous integrity=sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Ubuntu,sans-serif;list-style:none;text-decoration:none;outline:0!important;color:#fff}body{background-color:#0D1117}header{margin:3vh 1vw;padding:.5rem 1rem .5rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:#161B22;border-radius:30px;background-color:#161B22;border:2px solid rgba(255,255,255,.11)}header:hover,section:hover{box-shadow:0 0 15px #000}.brand{display:flex;align-items:center}img{width:2.5rem;height:2.5rem;border:2px solid #000;border-radius:50%}.name{margin-left:1vw;font-size:1.5rem}.intro{text-align:center;margin-bottom:2vh;margin-top:1vh}.social a{font-size:1.5rem;padding-left:1vw}.brand:hover,.social a:hover{filter:invert(.3)}section{margin:0 1vw;margin-bottom:10vh;padding:1vh 3vw;display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.11);border-radius:20px;background-color:#161B22}li:nth-child(1){padding:1rem 1rem .5rem 1rem}li:nth-child(n+1){padding-left:1rem}li label{padding-left:.5rem}li{padding-bottom:.5rem}span{margin-right:.5rem;cursor:pointer;user-select:none;transition:transform .2s ease-out}span.active{transform:rotate(90deg);-ms-transform:rotate(90deg);-webkit-transform:rotate(90deg);display:inline-block}ul{margin:1vh 1vw 1vh 1vw;padding:0 0 .5rem 0;border:2px solid #000;border-radius:20px;background-color:#1c2129;overflow:hidden}input[type=checkbox]{cursor:pointer;user-select:none}input[type=submit]{border-radius:20px;margin:2vh auto 1vh auto;width:50%;display:block;height:5.5vh;border:2px solid rgba(255,255,255,.11);background-color:#0D1117;font-size:16px;font-weight:500}input[type=submit]:focus,input[type=submit]:hover{background-color:rgba(255,255,255,.068);cursor:pointer}@media (max-width:768px){input[type=submit]{width:100%}}#treeview .parent{position:relative}#treeview .parent>ul{display:none}#sticks{margin:0 1vw;margin-bottom:1vh;padding:1vh 3vw;display:flex;flex-direction:column;border:2px solid rgba(255,255,255,.11);border-radius:20px;background-color:#161b22;align-items:center}#sticks.stick{position:sticky;top:0;z-index:10000}
+</style>
+<script>
+    function s_validate(){return 0==$("input[name^='filenode_']:checked").length?(alert("Select one file at least!"),!1):void 0}
+</script>
+<header>
+    <div class=brand><img alt=logo src=https://telegra.ph/file/43af672249c94053356c7.jpg>
+        <h2 class=name>Bittorrent Selection</h2>
+    </div>
+    <div class=social><a href=https://github.com/Sam-Max/rclone-mirror-leech-telegram-bot><i class="fa-github fab"></i></a></div>
+</header>
+<div id=sticks>
+    <h4>Selected files: <b id=checked_files>0</b> of <b id=total_files>0</b></h4>
+    <h4>Selected files size: <b id=checked_size>0</b> of <b id=total_size>0</b></h4>
+</div>
+<section>
+    <form action={{ form_url method=POST onsubmit="return s_validate()" }}>{{ file_tree }}<input name="Select these files ;)" type=submit></form>
+</section>
+<script>
+    $(document).ready(function () {
+            docready();
+            var tags = $("li").filter(function () {
+                return $(this).find("ul").length !== 0;
+            });
+    
+            tags.each(function () {
+                $(this).addClass("parent");
+            });
+    
+            $("body").find("ul:first-child").attr("id", "treeview");
+            $(".parent").prepend("<span>▶</span>");
+    
+            $("span").click(function (e) {
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                $(this).parent(".parent").find(">ul").toggle("slow");
+                if ($(this).hasClass("active")) $(this).removeClass("active");
+                else $(this).addClass("active");
+            });
+        });
+    
+        if (document.getElementsByTagName("ul").length >= 10) {
+            var labels = document.querySelectorAll("label");
+            //Shorting the file/folder names
+            labels.forEach(function (label) {
+                if (label.innerText.toString().split(" ").length >= 9) {
+                    let FirstPart = label.innerText
+                        .toString()
+                        .split(" ")
+                        .slice(0, 5)
+                        .join(" ");
+                    let SecondPart = label.innerText
+                        .toString()
+                        .split(" ")
+                        .splice(-5)
+                        .join(" ");
+                    label.innerText = `${FirstPart}... ${SecondPart}`;
+                }
+                if (label.innerText.toString().split(".").length >= 9) {
+                    let first = label.innerText
+                        .toString()
+                        .split(".")
+                        .slice(0, 5)
+                        .join(" ");
+                    let second = label.innerText
+                        .toString()
+                        .split(".")
+                        .splice(-5)
+                        .join(".");
+                    label.innerText = `${first}... ${second}`;
+                }
+            });
+        }
+</script>
+<script>
+    $('input[type="checkbox"]').change(function (e) {
+            var checked = $(this).prop("checked"),
+                container = $(this).parent(),
+                siblings = container.siblings();
+            /*
+              $(this).attr('value', function(index, attr){
+                 return attr == 'yes' ? 'noo' : 'yes';
+              });
+            */
+            container.find('input[type="checkbox"]').prop({
+                indeterminate: false,
+                checked: checked
+            });
+            function checkSiblings(el) {
+                var parent = el.parent().parent(),
+                    all = true;
+                el.siblings().each(function () {
+                    let returnValue = all = ($(this).children('input[type="checkbox"]').prop("checked") === checked);
+                    return returnValue;
+                });
+    
+                if (all && checked) {
+                    parent.children('input[type="checkbox"]').prop({
+                        indeterminate: false,
+                        checked: checked
+                    });
+                    checkSiblings(parent);
+                } else if (all && !checked) {
+                    parent.children('input[type="checkbox"]').prop("checked", checked);
+                    parent.children('input[type="checkbox"]').prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0));
+                    checkSiblings(parent);
+                } else {
+                    el.parents("li").children('input[type="checkbox"]').prop({
+                        indeterminate: true,
+                        checked: false
+                    });
+                }
+            }
+            checkSiblings(container);
+        });
+</script>
+<script>
+    function docready(){$("label[for^='filenode_']").css("cursor","pointer"),$("label[for^='filenode_']").click(function(){$(this).prev().click()}),checked_size(),checkingfiles();var e=$("label[for^='filenode_']").length;$("#total_files").text(e);var i=0,n=$("label[for^='filenode_']");n.each(function(){var e=parseFloat($(this).data("size"));i+=e,$(this).append(" - "+humanFileSize(e))}),$("#total_size").text(humanFileSize(i))}function checked_size(){var e=0,i=$("input[name^='filenode_']:checked");i.each(function(){var i=parseFloat($(this).data("size"));e+=i}),$("#checked_size").text(humanFileSize(e))}function checkingfiles(){var e=$("input[name^='filenode_']:checked").length;$("#checked_files").text(e)}function humanFileSize(e){var i=-1,n=[" kB"," MB"," GB"," TB","PB","EB","ZB","YB"];do e/=1024,i++;while(e>1024);return Math.max(e,0).toFixed(1)+n[i]}function sticking(){var e=$(window).scrollTop(),i=$(".brand").offset().top;e>i?$("#sticks").addClass("stick"):$("#sticks").removeClass("stick")}$("input[name^='foldernode_']").change(function(){checkingfiles(),checked_size()}),$("input[name^='filenode_']").change(function(){checkingfiles(),checked_size()}),$(function(){$(window).scroll(sticking),sticking()})
+</script>

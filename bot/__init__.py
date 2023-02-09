@@ -52,6 +52,10 @@ status_dict = {}
 # Value: telegram.Message
 status_reply_dict = {}
 
+# key: rss_title
+# value: [rss_feed, last_link, last_title, filter]
+rss_dict = {}
+
 m_queue = Queue()
 l_queue = Queue()
 
@@ -208,6 +212,16 @@ SERVER_SIDE = SERVER_SIDE.lower() == 'true'
 
 CMD_INDEX = environ.get('CMD_INDEX', '')
 
+RSS_CHAT_ID = environ.get('RSS_CHAT_ID', '')
+RSS_CHAT_ID = '' if len(RSS_CHAT_ID) == 0 else int(RSS_CHAT_ID)
+
+RSS_DELAY = environ.get('RSS_DELAY', '')
+RSS_DELAY = 900 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
+
+RSS_COMMAND = environ.get('RSS_COMMAND', '')
+if len(RSS_COMMAND) == 0:
+    RSS_COMMAND = ''
+
 SERVER_PORT = environ.get('SERVER_PORT', '') or environ.get('PORT', '')
 if len(SERVER_PORT) == 0:
     SERVER_PORT = 80
@@ -325,6 +339,9 @@ if not config_dict:
                    'OWNER_ID': OWNER_ID,
                    'PARALLEL_TASKS': PARALLEL_TASKS,
                    'REMOTE_SELECTION': REMOTE_SELECTION,
+                   'RSS_CHAT_ID': RSS_CHAT_ID,
+                   'RSS_COMMAND': RSS_COMMAND,
+                   'RSS_DELAY': RSS_DELAY,
                    'SEARCH_PLUGINS': SEARCH_PLUGINS,
                    'SERVER_SIDE': SERVER_SIDE,
                    'SEARCH_API_LINK': SEARCH_API_LINK,
@@ -346,7 +363,7 @@ if not config_dict:
                    'WEB_PINCODE': WEB_PINCODE}
 
 if BASE_URL:
-    Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+    Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
     LOGGER.info(f"HTTP server started at port {SERVER_PORT}")
 
 srun(["qbittorrent-nox", "-d", "--profile=."])

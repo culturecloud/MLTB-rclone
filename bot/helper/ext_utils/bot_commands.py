@@ -38,6 +38,7 @@ class _BotCommands:
         self.CancelCommand= f'cancel{CMD_INDEX}'
         self.LogsCommand = f'log{CMD_INDEX}'
         self.RestartCommand = f'restart{CMD_INDEX}'
+        self.RssCommand= f'rss{CMD_INDEX}'
         self.PingCommand = f'ping{CMD_INDEX}'
         self.HelpCommand = f'help{CMD_INDEX}'
 

@@ -84,6 +84,17 @@ async def sendFile(message, name: str, caption=""):
         LOGGER.error(str(e))
         return
 
+async def sendRss(text: str):
+    try:
+        return await bot.send_message(config_dict['RSS_CHAT_ID'], text, disable_web_page_preview=True)
+    except FloodWait as e:
+        LOGGER.warning(str(e))
+        await sleep(e.value * 1.5)
+        return await sendRss(text)
+    except Exception as e:
+        LOGGER.error(str(e))
+        return
+
 async def delete_all_messages():
     async with status_reply_dict_lock:
         for data in list(status_reply_dict.values()):

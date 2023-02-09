@@ -100,6 +100,16 @@ async def load_config():
      SEARCH_API_LINK = environ.get('SEARCH_API_LINK', '').rstrip("/")
      if len(SEARCH_API_LINK) == 0:
           SEARCH_API_LINK = ''
+          
+     RSS_COMMAND = environ.get('RSS_COMMAND', '')
+     if len(RSS_COMMAND) == 0:
+          RSS_COMMAND = ''
+
+     RSS_CHAT_ID = environ.get('RSS_CHAT_ID', '')
+     RSS_CHAT_ID = '' if len(RSS_CHAT_ID) == 0 else int(RSS_CHAT_ID)
+
+     RSS_DELAY = environ.get('RSS_DELAY', '')
+     RSS_DELAY = 900 if len(RSS_DELAY) == 0 else int(RSS_DELAY)
 
      SEARCH_PLUGINS = environ.get('SEARCH_PLUGINS', '')
      if len(SEARCH_PLUGINS) == 0:
@@ -190,7 +200,7 @@ async def load_config():
           srun(["pkill", "-9", "-f", "gunicorn"])
      else:
           srun(["pkill", "-9", "-f", "gunicorn"])
-          Popen(["gunicorn", "qbitweb.wserver:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+          Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
 
      UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
      if len(UPSTREAM_REPO) == 0:
@@ -230,7 +240,6 @@ async def load_config():
      LOCAL_MIRROR = LOCAL_MIRROR.lower() == 'true'
 
      CMD_INDEX = environ.get('CMD_INDEX', '')
-
      config_dict.update({'AS_DOCUMENT': AS_DOCUMENT,
                          'ALLOWED_CHATS': ALLOWED_CHATS,
                          'AUTO_DELETE_MESSAGE_DURATION': AUTO_DELETE_MESSAGE_DURATION,
@@ -257,6 +266,9 @@ async def load_config():
                          'MULTI_RCLONE_CONFIG': MULTI_RCLONE_CONFIG, 
                          'OWNER_ID': OWNER_ID,
                          'REMOTE_SELECTION': REMOTE_SELECTION,
+                         'RSS_CHAT_ID': RSS_CHAT_ID,
+                         'RSS_COMMAND': RSS_COMMAND,
+                         'RSS_DELAY': RSS_DELAY,
                          'PARALLEL_TASKS': PARALLEL_TASKS,
                          'SEARCH_PLUGINS': SEARCH_PLUGINS,
                          'SEARCH_API_LINK': SEARCH_API_LINK,
