@@ -201,10 +201,11 @@ async def load_config():
      BASE_URL = environ.get('BASE_URL', '').rstrip("/")
      if len(BASE_URL) == 0:
           BASE_URL = ''
-          srun(["pkill", "-9", "-f", "gunicorn"])
+          srun(["pkill", "-9", "-f", "uvicorn"])
      else:
-          srun(["pkill", "-9", "-f", "gunicorn"])
-          Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+          srun(["pkill", "-9", "-f", "uvicorn"])
+          # Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+          Popen(["uvicorn", "web.server:app", f"--host 0.0.0.0", f"--port {SERVER_PORT}"])
 
      UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
      if len(UPSTREAM_REPO) == 0:

@@ -43,7 +43,7 @@ async def restart(client, message):
     bot.stop()
     if app is not None:
         app.stop()
-    srun(["pkill", "-9", "-f", "aria2c|rclone|qbittorrent-nox|ffmpeg"])
+    srun(["pkill", "-9", "-f", "uvicorn|aria2c|rclone|qbittorrent-nox|ffmpeg"])
     srun(["python3", "update.py"])
     with open(".restartmsg", "w") as f:
         f.truncate(0)

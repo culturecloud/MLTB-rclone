@@ -3,7 +3,6 @@ __author__ = "Sam-Max & Culture Cloud"
 
 from asyncio import Lock
 from asyncio import Queue
-from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig
 from os import environ, remove as osremove, path as ospath, makedirs as osmakedirs
 from threading import Thread
 from time import sleep, time
@@ -15,17 +14,14 @@ from qbittorrentapi import Client as qbitClient
 from subprocess import Popen, run as srun
 from pyrogram import Client
 from bot.conv_pyrogram import Conversation
+from bot.logger import LOGGER
 from asyncio import get_event_loop
+
+LOGGER = LOGGER
 
 botloop = get_event_loop()
 
 botUptime = time()
-
-basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
-                        handlers=[FileHandler('log.txt'), StreamHandler()],
-                        level=INFO)
-
-LOGGER = getLogger(__name__)
 
 LOGGER.info("Initializing the bot...")
 
@@ -241,7 +237,7 @@ elif 'RENDER_EXTERNAL_URL' in environ:
 elif 'BASE_URL' in environ:
     BASE_URL = environ.get('BASE_URL').rstrip("/")
 else:
-    log_warning('BASE_URL not provided! You will not be able to use local mirror or torrent selection')
+    LOGGER.warning('BASE_URL not provided! You will not be able to use local mirror or torrent selection')
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
@@ -370,8 +366,8 @@ if not config_dict:
                    'WEB_PINCODE': WEB_PINCODE}
 
 if BASE_URL:
-    Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
-    LOGGER.info(f"HTTP server started at port {SERVER_PORT}")
+    # Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+    Popen(["uvicorn", "web.server:app", f"--host 0.0.0.0", f"--port {SERVER_PORT}"])
 
 srun(["qbittorrent-nox", "-d", "--profile=."])
 if not ospath.exists('.netrc'):

@@ -1,20 +1,14 @@
-from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
+from bot.logger import LOGGER
 
 from web.nodes import make_tree
 
 app = Flask(__name__)
 
 aria2 = ariaAPI(ariaClient(host="http://127.0.0.1", port=6800, secret=""))
-
-basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
-                    handlers=[FileHandler("log.txt"), StreamHandler()],
-                    level=INFO)
-
-LOGGER = getLogger(__name__)
 
 def re_verfiy(paused, resumed, client, hash_id):
 

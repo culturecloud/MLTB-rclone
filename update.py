@@ -1,37 +1,33 @@
 # Source: https://github.com/anasty17/mirror-leech-telegram-bot/blob/master/update.py
 
-from logging import FileHandler, StreamHandler, INFO, basicConfig, error as log_error, info as log_info
 from os import path as ospath, environ
 from subprocess import run as srun
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from subprocess import run as srun
+from bot.logger import LOGGER
 
 if ospath.exists('log.txt'):
     with open('log.txt', 'r+') as f:
         f.truncate(0)
 
-basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
-                    handlers=[FileHandler('log.txt'), StreamHandler()],
-                    level=INFO)
-
-log_info("Running updater script...")
+LOGGER.info("Running updater script...")
 
 CONFIG_ENV = environ.get('CONFIG_ENV', None)
 if CONFIG_ENV:
-    log_info("CONFIG_ENV variable found! Downloading config file ...")
+    LOGGER.info("CONFIG_ENV variable found! Downloading config file ...")
     download_file = srun(["curl", "-sL", f"{CONFIG_ENV}", "-o", "config.env"])
     if download_file.returncode == 0:
-        log_info("Config file has been downloaded as 'config.env'")
+        LOGGER.info("Config file has been downloaded as 'config.env'")
     else:
-        log_error("Something went wrong while downloading config file! please recheck the CONFIG_ENV variable")
+        LOGGER.error("Something went wrong while downloading config file! please recheck the CONFIG_ENV variable")
         exit(1)
         
 load_dotenv('config.env', override=True)
 
 BOT_TOKEN = environ.get('BOT_TOKEN', '')
 if len(BOT_TOKEN) == 0:
-    log_error("BOT_TOKEN variable is missing! Exiting now")
+    LOGGER.error("BOT_TOKEN variable is missing! Exiting now")
     exit(1)
 
 bot_id = int(BOT_TOKEN.split(':', 1)[0])
@@ -74,6 +70,6 @@ if UPSTREAM_REPO is not None:
             && git reset --hard origin/{UPSTREAM_BRANCH} -q"], shell=True)
 
     if update.returncode == 0:
-        log_info('Successfully updated from UPSTREAM_REPO')
+        LOGGER.info('Successfully updated from UPSTREAM_REPO')
     else:
-        log_error('Something went wrong while updating, check UPSTREAM_REPO if valid or not!')
+        LOGGER.error('Something went wrong while updating, check UPSTREAM_REPO if valid or not!')
