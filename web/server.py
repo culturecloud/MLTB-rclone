@@ -1,10 +1,11 @@
+import logging
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
-from bot.logger import LOGGER
-
 from web.nodes import make_tree
+
+LOGGER = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
