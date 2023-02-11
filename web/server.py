@@ -83,7 +83,7 @@ def list_torrent_contents(id_):
     else:
         res = aria2.client.get_files(id_)
         cont = make_tree(res, True)
-    return render_template("selection.html", file_tree=f"{cont[0]}" form_url=f"/app/files/{id_}?pin_code={pincode}")
+    return render_template("selection.html", file_tree=cont[0], form_url=f"/app/files/{id_}?pin_code={pincode}")
 
 @app.route('/app/files/<string:id_>', methods=['POST'])
 def set_priority(id_):
