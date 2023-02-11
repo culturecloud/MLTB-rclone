@@ -49,6 +49,10 @@ if DATABASE_URL is not None:
         environ['UPSTREAM_REPO'] = config_dict['UPSTREAM_REPO']
         environ['UPSTREAM_BRANCH'] = config_dict['UPSTREAM_BRANCH']
     conn.close()
+    
+UPGRADE_PKGS = environ.get('UPGRADE_PKGS', 'False')
+if UPGRADE_PKGS.lower() == 'true':
+    srun(["pip3", "install", "--no-cache-dir", "-Ur libraries.txt"])
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
