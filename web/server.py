@@ -3,7 +3,6 @@ from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
-from markupsafe import Markup
 from web.nodes import make_tree
 
 app = Flask(__name__)
@@ -83,7 +82,7 @@ def list_torrent_contents(id_):
     else:
         res = aria2.client.get_files(id_)
         cont = make_tree(res, True)
-    return render_template("selection.html", file_tree=Markup.escape(cont[0]), form_url=f"/app/files/{id_}?pin_code={pincode}")
+    return render_template("selection.html", file_tree=cont[0], form_url=f"/app/files/{id_}?pin_code={pincode}")
 
 @app.route('/app/files/<string:id_>', methods=['POST'])
 def set_priority(id_):

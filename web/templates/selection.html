@@ -26,7 +26,7 @@
     <h4>Selected files size: <b id=checked_size>0</b> of <b id=total_size>0</b></h4>
 </div>
 <section>
-    <form action={{ form_url }} method=POST onsubmit="return s_validate()">{{ file_tree }}<input name="Select these files ;)" type=submit></form>
+    <form action={{ form_url }} method=POST onsubmit="return s_validate()">{{ file_tree|safe }}<input name="Select these files ;)" type=submit></form>
 </section>
 <script>
     $(document).ready(function () {
