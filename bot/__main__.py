@@ -15,7 +15,7 @@ from bot.modules import batch, cancel, botfiles, copy, leech, mirror_leech, myfi
 
 async def start(client, message):
     buttons = ButtonMaker()
-    buttons.url_buildbutton("Repo", "https://github.com/culturecloud/mltb-rclone")
+    buttons.url_buildbutton("Source Code", "https://cutt.ly/03xEtD0")
     buttons.url_buildbutton("Owner", "https://t.me/pseudokawaii")
     reply_markup = buttons.build_menu(2)
     if CustomFilters.user_filter or CustomFilters.chat_filter:
@@ -28,7 +28,7 @@ The all-in-one Telegram bot which utilizes some of the world's most awesome & po
         '''
         await sendMarkup(msg, message, reply_markup)
     else:
-        await sendMarkup("Not Authorized user, deploy your own version", message, reply_markup)     
+        await sendMarkup("Sorry, I'm not interested in NTR. <spoiler>Here, have a banana 🍌</spoiler>", message, reply_markup)     
     
 async def restart(client, message):
     restart_msg= await sendMessage("Restarting...", message)
@@ -49,7 +49,6 @@ async def restart(client, message):
         f.truncate(0)
         f.write(f"{restart_msg.chat.id}\n{restart_msg.id}\n")
     osexecl(executable, executable, "-m", "bot")
-    LOGGER.info("Bot restarted!")
 
 async def ping(client, message):
     start_time = int(round(time() * 1000))
@@ -124,7 +123,8 @@ async def main():
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         try:
-            await bot.edit_message_text(chat_id, msg_id, "Restarted successfully!")  
+            await bot.edit_message_text(chat_id, msg_id, "Restarted successfully!")
+            LOGGER.info("Bot restarted successfully!")
         except:
             pass   
         osremove(".restartmsg")
