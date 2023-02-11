@@ -1,13 +1,13 @@
 # Source: https://github.com/anasty17/mirror-leech-telegram-bot/blob/master/update.py
 
-import logging
 from os import path as ospath, environ
 from subprocess import run as srun
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from loguru import logger
 from subprocess import run as srun
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logger
 
 if ospath.exists('log.txt'):
     with open('log.txt', 'r+') as f:

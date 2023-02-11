@@ -185,11 +185,10 @@ async def ownerset_callback(client, callback_query):
                 if DATABASE_URL:
                     DbManager().update_aria2('bt-stop-timeout', '0')
             elif data[3] == 'BASE_URL':
-                srun(["pkill", "-9", "-f", "uvicorn"])
+                srun(["pkill", "-9", "-f", "gunicorn"])
             elif data[3] == 'SERVER_PORT':
-                srun(["pkill", "-9", "-f", "uvicorn"])
-                # Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
-                Popen(["uvicorn", "web.server:app", "--host", "0.0.0.0", "--port", "80"])
+                srun(["pkill", "-9", "-f", "gunicorn"])
+                Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
             await query.answer("Reseted")    
             config_dict[data[3]] = value
             if DATABASE_URL:
@@ -369,9 +368,8 @@ async def start_env_listener(client, query, user_id, key):
                             leech_log.append(int(id_.strip()))
                     elif key == 'SERVER_PORT':
                         value = int(value)
-                        srun(["pkill", "-9", "-f", "uvicorn"])
-                        # Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
-                        Popen(["uvicorn", "web.server:app", "--host", "0.0.0.0", "--port", f"{value}"])
+                        srun(["pkill", "-9", "-f", "gunicorn"])
+                        Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
                     elif key == 'EXTENSION_FILTER':
                         fx = value.split()
                         GLOBAL_EXTENSION_FILTER.clear()
