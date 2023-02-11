@@ -3,11 +3,12 @@ from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
+
 from web.nodes import make_tree
 
 app = Flask(__name__)
 
-aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
+aria2 = ariaAPI(ariaClient(host="http://127.0.0.1", port=6800, secret=""))
 
 basicConfig(format='[%(levelname)s] [%(filename)s] [%(lineno)d] %(message)s',
                     handlers=[FileHandler("log.txt"), StreamHandler()],
@@ -40,7 +41,7 @@ def re_verfiy(paused, resumed, client, hash_id):
         LOGGER.info("Reverification Failed! Correcting stuff...")
         client.auth_log_out()
         sleep(1)
-        client = qbClient(host="localhost", port="8090")
+        client = qbClient(host="127.0.0.1", port="8090")
         try:
             client.torrents_file_priority(torrent_hash=hash_id, file_ids=paused, priority=0)
         except NotFound404Error:
@@ -75,14 +76,14 @@ def list_torrent_contents(id_):
         return "<h1>Incorrect pin code</h1>"
 
     if len(id_) > 20:
-        client = qbClient(host="localhost", port="8090")
+        client = qbClient(host="127.0.0.1", port="8090")
         res = client.torrents_files(torrent_hash=id_)
         cont = make_tree(res)
         client.auth_log_out()
     else:
         res = aria2.client.get_files(id_)
         cont = make_tree(res, True)
-    return render_template("selection.html", file_tree=cont[0], form_url=f"/app/files/{id_}?pin_code={pincode}")
+    return render_template("selection.html", file_tree=cont, form_url=f"/app/files/{id_}?pin_code={pincode}")
 
 @app.route('/app/files/<string:id_>', methods=['POST'])
 def set_priority(id_):
@@ -105,7 +106,7 @@ def set_priority(id_):
         pause = pause.strip("|")
         resume = resume.strip("|")
 
-        client = qbClient(host="localhost", port="8090")
+        client = qbClient(host="127.0.0.1", port="8090")
 
         try:
             client.torrents_file_priority(torrent_hash=id_, file_ids=pause, priority=0)

@@ -32,7 +32,7 @@ LOGGER.info("Initializing the bot...")
 load_dotenv('config.env', override=True)
 
 def get_client():
-    return qbitClient(host="localhost", port=8090)
+    return qbitClient(host="127.0.0.1", port=8090)
 
 Interval = []
 QbInterval = []
@@ -390,7 +390,7 @@ if ospath.exists('accounts.zip'):
 if not ospath.exists('accounts'):
     config_dict['USE_SERVICE_ACCOUNTS'] = False
 
-aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
+aria2 = ariaAPI(ariaClient(host="http://127.0.0.1", port=6800, secret=""))
 
 def aria2c_init():
     try:
