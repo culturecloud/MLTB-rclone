@@ -41,20 +41,20 @@ DOWNLOADER="curl -fsSL --connect-timeout 3 --max-time 3 --retry 2"
 NL=$'\n'
 
 DATE_TIME() {
-    date +"%y-%m-%d %H:%M:%S"
+    date +"%F %T"
 }
 
 GET_TRACKERS() {
     
     if [[ -z "${CUSTOM_TRACKER_URL}" ]]; then
-        echo && echo -e "$(DATE_TIME) | ${INFO}     | Get BT trackers..."
+        echo && echo -e "$(DATE_TIME) | ${INFO} | Get BT trackers..."
         TRACKER=$(
             ${DOWNLOADER} https://trackerslist.com/all_aria2.txt ||
                 ${DOWNLOADER} https://cdn.staticaly.com/gh/XIU2/TrackersListCollection@master/all_aria2.txt ||
                 ${DOWNLOADER} https://trackers.p3terx.com/all_aria2.txt
         )
     else
-        echo && echo -e "$(DATE_TIME) | ${INFO}     | Get BT trackers from url(s):${CUSTOM_TRACKER_URL} ..."
+        echo && echo -e "$(DATE_TIME) | ${INFO} | Get BT trackers from url(s):${CUSTOM_TRACKER_URL} ..."
         URLS=$(echo ${CUSTOM_TRACKER_URL} | tr "," "$NL")
         for URL in $URLS; do
             TRACKER+="$(${DOWNLOADER} ${URL} | tr "," "\n")$NL"
@@ -64,7 +64,7 @@ GET_TRACKERS() {
 
     [[ -z "${TRACKER}" ]] && {
         echo
-        echo -e "$(DATE_TIME) | ${ERROR}    | Unable to get trackers, network failure or invalid links." && exit 1
+        echo -e "$(DATE_TIME) | ${ERROR} | Unable to get trackers, network failure or invalid links." && exit 1
     }
 }
 
@@ -77,18 +77,18 @@ ${TRACKER}
 }
 
 ADD_TRACKERS() {
-    echo -e "$(DATE_TIME) | ${INFO}     | Adding BT trackers to Aria2 configuration file ${LIGHT_PURPLE_FONT_PREFIX}${ARIA2_CONF}${FONT_COLOR_SUFFIX} ..." && echo
+    echo -e "$(DATE_TIME) | ${INFO} | Adding BT trackers to Aria2 configuration file ${LIGHT_PURPLE_FONT_PREFIX}${ARIA2_CONF}${FONT_COLOR_SUFFIX} ..." && echo
     if [ ! -f ${ARIA2_CONF} ]; then
-        echo -e "$(DATE_TIME) | ${ERROR}    | '${ARIA2_CONF}' does not exist."
+        echo -e "$(DATE_TIME) | ${ERROR} | '${ARIA2_CONF}' does not exist."
         exit 1
     else
         [ -z $(grep "bt-tracker=" ${ARIA2_CONF}) ] && echo "bt-tracker=" >>${ARIA2_CONF}
-        sed -i "s@^\(bt-tracker=\).*@\1${TRACKER}@" ${ARIA2_CONF} && echo -e "${INFO} BT trackers successfully added to Aria2 configuration file !"
+        sed -i "s@^\(bt-tracker=\).*@\1${TRACKER}@" ${ARIA2_CONF} && echo -e "$(DATE_TIME) | ${INFO} | BT trackers successfully added to Aria2 configuration file !"
     fi
 }
 
 [ $(command -v curl) ] || {
-    echo -e "$(DATE_TIME) | ${ERROR}    | curl is not installed."
+    echo -e "$(DATE_TIME) | ${ERROR} | curl is not installed."
     exit 1
 }
 
