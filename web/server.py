@@ -1,17 +1,9 @@
-import sys
-from loguru import logger
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
 from web.nodes import make_tree
-
-logger.add(sys.stdout,
-           format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-           colorize=True)
-logger.add("log.txt",
-           enqueue=True)
-LOGGER = logger
+from web.logger import LOGGER
 
 app = Flask(__name__)
 
