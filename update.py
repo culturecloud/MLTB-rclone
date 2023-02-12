@@ -9,7 +9,7 @@ from subprocess import run as srun
 from web.log_config import configure_logger
 
 configure_logger()
-LOGGER = logging.getLogger(__main__)
+LOGGER = logging.getLogger(__name__)
 
 if ospath.exists('log.txt'):
     with open('log.txt', 'r+') as f:
