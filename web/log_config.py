@@ -35,6 +35,18 @@ class StubbedGunicornLogger(Logger):
         self.access_logger = logging.getLogger("gunicorn.access")
         self.access_logger.addHandler(handler)
         self.access_logger.setLevel(LOG_LEVEL)
+        
+        # Configure loguru before gunicorn starts logging
+        logger.configure(handlers=[{
+            "sink": sys.stdout,
+            "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+            "colorize": True
+        }, {
+            "sink": "log.txt",
+            "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+            "enqueue": True,
+            "serialize": JSON_LOGS
+        }])
 
 
 def configure_logger() -> None:
@@ -46,7 +58,7 @@ def configure_logger() -> None:
         logging.getLogger(name).handlers = []
         logging.getLogger(name).propagate = True
 
-    # Configure logger 
+    # Configure loguru (again) if gunicorn is not used
     logger.configure(handlers=[{
         "sink": sys.stdout,
         "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
