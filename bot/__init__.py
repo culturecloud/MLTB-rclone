@@ -1,6 +1,7 @@
 __version__ = "4.0-freepaas"
 __author__ = "Sam-Max & Culture Cloud"
 
+import logging
 from asyncio import Lock
 from asyncio import Queue
 from os import environ, remove as osremove, path as ospath, makedirs as osmakedirs
@@ -14,10 +15,11 @@ from qbittorrentapi import Client as qbitClient
 from subprocess import Popen, run as srun
 from pyrogram import Client
 from bot.conv_pyrogram import Conversation
-from bot.logger import LOGGER
 from asyncio import get_event_loop
+from bot.logger import configure_logger
 
-LOGGER = LOGGER
+configure_logger()
+LOGGER = logging.getLogger(__name__)
 
 botloop = get_event_loop()
 

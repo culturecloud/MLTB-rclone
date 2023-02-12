@@ -37,15 +37,25 @@ class StubbedGunicornLogger(Logger):
         self.access_logger.setLevel(LOG_LEVEL)
 
 
-logger.configure(handlers=[{
-    "sink": sys.stdout,
-    "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-    "colorize": True
-}, {
-    "sink": "log.txt",
-    "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
-    "enqueue": True,
-    "serialize": JSON_LOGS
-}])
+def configure_logger() -> None:
+    logging.root.handlers = [InterceptHandler()]
+    logging.root.setLevel(LOG_LEVEL)
+
+    # Remove all log handlers and propagate to root logger
+    for name in logging.root.manager.loggerDict.keys():
+        logging.getLogger(name).handlers = []
+        logging.getLogger(name).propagate = True
+
+    # Configure logger 
+    logger.configure(handlers=[{
+        "sink": sys.stdout,
+        "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+        "colorize": True
+    }, {
+        "sink": "log.txt",
+        "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+        "enqueue": True,
+        "serialize": JSON_LOGS
+    }])
 
 LOGGER = logging.getLogger(__name__)

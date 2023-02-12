@@ -24,27 +24,23 @@ class InterceptHandler(logging.Handler):
 
         logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
+def configure_logger() -> None:
+    logging.root.handlers = [InterceptHandler()]
+    logging.root.setLevel(LOG_LEVEL)
 
-intercept_handler = InterceptHandler()
-logging.root.setLevel(LOG_LEVEL)
+    # Remove all log handlers and propagate to root logger
+    for name in logging.root.manager.loggerDict.keys():
+        logging.getLogger(name).handlers = []
+        logging.getLogger(name).propagate = True
 
-seen = set()
-for name in [
-    *logging.root.manager.loggerDict.keys()
-]:
-    if name not in seen:
-        seen.add(name.split(".")[0])
-        logging.getLogger(name).handlers = [intercept_handler]
-
-logger.configure(handlers=[{
-    "sink": sys.stderr,
-    "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-    "colorize": True
-}, {
-    "sink": "log.txt",
-    "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
-    "enqueue": True,
-    "serialize": JSON_LOGS
-}])
-
-LOGGER = logging.getLogger(__name__)
+    # Configure logger 
+    logger.configure(handlers=[{
+        "sink": sys.stdout,
+        "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+        "colorize": True
+    }, {
+        "sink": "log.txt",
+        "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
+        "enqueue": True,
+        "serialize": JSON_LOGS
+    }])
