@@ -366,7 +366,7 @@ if not config_dict:
                    'WEB_PINCODE': WEB_PINCODE}
 
 if BASE_URL:
-    Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+    Popen(["gunicorn", "web.server:app", f"--bind=0.0.0.0:{SERVER_PORT}", "--logger-class=bot.logger.StubbedGunicornLogger", "--log-file=log.txt"])
 
 srun(["qbittorrent-nox", "-d", "--profile=."])
 if not ospath.exists('.netrc'):

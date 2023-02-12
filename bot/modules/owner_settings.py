@@ -188,7 +188,7 @@ async def ownerset_callback(client, callback_query):
                 srun(["pkill", "-9", "-f", "gunicorn"])
             elif data[3] == 'SERVER_PORT':
                 srun(["pkill", "-9", "-f", "gunicorn"])
-                Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:80", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+                Popen(["gunicorn", "web.server:app", "--bind=0.0.0.0:80", "--logger-class=bot.logger.StubbedGunicornLogger", "--log-file=log.txt"])
             await query.answer("Reseted")    
             config_dict[data[3]] = value
             if DATABASE_URL:
@@ -369,7 +369,7 @@ async def start_env_listener(client, query, user_id, key):
                     elif key == 'SERVER_PORT':
                         value = int(value)
                         srun(["pkill", "-9", "-f", "gunicorn"])
-                        Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{value}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+                        Popen(["gunicorn", "web.server:app", f"--bind=0.0.0.0:{value}", "--logger-class=bot.logger.StubbedGunicornLogger", "--log-file=log.txt"])
                     elif key == 'EXTENSION_FILTER':
                         fx = value.split()
                         GLOBAL_EXTENSION_FILTER.clear()

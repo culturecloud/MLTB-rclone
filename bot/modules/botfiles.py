@@ -204,7 +204,7 @@ async def load_config():
           srun(["pkill", "-9", "-f", "gunicorn"])
      else:
           srun(["pkill", "-9", "-f", "gunicorn"])
-          Popen(["gunicorn", "web.server:app", f"--bind 0.0.0.0:{SERVER_PORT}", "--access-logfile=/dev/null", "--error-logfile=guni_log.txt"])
+          Popen(["gunicorn", "web.server:app", f"--bind=0.0.0.0:{SERVER_PORT}", "--logger-class=bot.logger.StubbedGunicornLogger", "--log-file=log.txt"])
 
      UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
      if len(UPSTREAM_REPO) == 0:
