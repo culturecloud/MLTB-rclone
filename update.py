@@ -52,7 +52,7 @@ if DATABASE_URL is not None:
     
 UPGRADE_PKGS = environ.get('UPGRADE_PKGS', 'False')
 if UPGRADE_PKGS.lower() == 'true':
-    srun(["pip3", "install", "--no-cache-dir", "-Ur", "libraries.txt"])
+    srun(["pip3", "install", "--no-cache-dir", "-qUr", "libraries.txt"])
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
