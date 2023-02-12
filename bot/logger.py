@@ -42,7 +42,7 @@ logger.configure(handlers=[{
     "colorize": True
 }, {
     "sink": "log.txt",
-    "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}"
+    "format": "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
     "enqueue": True,
     "serialize": JSON_LOGS
 }])

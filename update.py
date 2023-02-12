@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from loguru import logger
 from subprocess import run as srun
 
+"""
 logger.add(
     sys.stdout,
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
@@ -16,6 +17,8 @@ logger.add(
     "log.txt",
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
     enqueue=True)
+"""
+
 LOGGER = logger
 
 if ospath.exists('log.txt'):
