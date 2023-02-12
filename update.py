@@ -5,8 +5,8 @@ from os import path as ospath, environ
 from subprocess import run as srun
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from loguru import logger
 from subprocess import run as srun
+from web.logger import LOGGER
 
 """
 logger.add(
@@ -18,8 +18,6 @@ logger.add(
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}",
     enqueue=True)
 """
-
-LOGGER = logger
 
 if ospath.exists('log.txt'):
     with open('log.txt', 'r+') as f:
