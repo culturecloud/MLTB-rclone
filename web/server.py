@@ -1,3 +1,4 @@
+import sys
 from loguru import logger
 from time import sleep
 from qbittorrentapi import NotFound404Error, Client as qbClient
