@@ -16,7 +16,7 @@ from subprocess import Popen, run as srun
 from pyrogram import Client
 from bot.conv_pyrogram import Conversation
 from asyncio import get_event_loop
-from bot.logger import configure_logger
+from bot.log_config import configure_logger
 
 configure_logger()
 LOGGER = logging.getLogger(__name__)

@@ -57,5 +57,3 @@ def configure_logger() -> None:
         "enqueue": True,
         "serialize": JSON_LOGS
     }])
-
-LOGGER = logging.getLogger(__name__)

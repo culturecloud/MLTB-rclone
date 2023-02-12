@@ -31,30 +31,30 @@
 
 RED_FONT_PREFIX="\033[31m"
 GREEN_FONT_PREFIX="\033[32m"
-YELLOW_FONT_PREFIX="\033[1;33m"
 LIGHT_PURPLE_FONT_PREFIX="\033[1;35m"
-FONT_COLOR_SUFFIX="\033[0m"
-INFO="INFO"
-ERROR="${RED_FONT_PREFIX}ERROR${FONT_COLOR_SUFFIX}"
+BOLD_FONT_PREFIX="\033[1m"
+STYLE_SUFFIX="\033[0m"
+INFO="${BOLD_FONT_PREFIX}INFO${STYLE_SUFFIX}"
+ERROR="${BOLD_FONT_PREFIX}${RED_FONT_PREFIX}ERROR${STYLE_SUFFIX}"
 ARIA2_CONF=/culturecloud/mltb/aria2/aria2.conf
 DOWNLOADER="curl -fsSL --connect-timeout 3 --max-time 3 --retry 2"
 NL=$'\n'
 
 DATE_TIME() {
-    date +"${GREEN_FONT_PREFIX}%F %T${FONT_COLOR_SUFFIX}"
+    date +"${GREEN_FONT_PREFIX}%F %T${STYLE_SUFFIX}"
 }
 
 GET_TRACKERS() {
     
     if [[ -z "${CUSTOM_TRACKER_URL}" ]]; then
-        echo && echo -e "$(DATE_TIME) | ${INFO} | Get BT trackers..."
+        echo && echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}Get BT trackers...${STYLE_SUFFIX}"
         TRACKER=$(
             ${DOWNLOADER} https://trackerslist.com/all_aria2.txt ||
                 ${DOWNLOADER} https://cdn.staticaly.com/gh/XIU2/TrackersListCollection@master/all_aria2.txt ||
                 ${DOWNLOADER} https://trackers.p3terx.com/all_aria2.txt
         )
     else
-        echo && echo -e "$(DATE_TIME) | ${INFO} | Get BT trackers from url(s):${CUSTOM_TRACKER_URL} ..."
+        echo && echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}Get BT trackers from url(s):${STYLE_SUFFIX}${CUSTOM_TRACKER_URL} ..."
         URLS=$(echo ${CUSTOM_TRACKER_URL} | tr "," "$NL")
         for URL in $URLS; do
             TRACKER+="$(${DOWNLOADER} ${URL} | tr "," "\n")$NL"
@@ -64,7 +64,7 @@ GET_TRACKERS() {
 
     [[ -z "${TRACKER}" ]] && {
         echo
-        echo -e "$(DATE_TIME) | ${ERROR} | Unable to get trackers, network failure or invalid links." && exit 1
+        echo -e "$(DATE_TIME) | ${ERROR} | ${RED_FONT_PREFIX}${BOLD_FONT_PREFIX}Unable to get trackers, network failure or invalid links.${STYLE_SUFFIX}" && exit 1
     }
 }
 
@@ -77,18 +77,18 @@ ${TRACKER}
 }
 
 ADD_TRACKERS() {
-    echo -e "$(DATE_TIME) | ${INFO} | Adding BT trackers to Aria2 configuration file ${LIGHT_PURPLE_FONT_PREFIX}${ARIA2_CONF}${FONT_COLOR_SUFFIX} ..." && echo
+    echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}Adding BT trackers to Aria2 configuration file ${LIGHT_PURPLE_FONT_PREFIX}${ARIA2_CONF}${STYLE_SUFFIX} ..." && echo
     if [ ! -f ${ARIA2_CONF} ]; then
-        echo -e "$(DATE_TIME) | ${ERROR} | '${ARIA2_CONF}' does not exist."
+        echo -e "$(DATE_TIME) | ${ERROR} | ${RED_FONT_PREFIX}${BOLD_FONT_PREFIX}'${ARIA2_CONF}' does not exist.${STYLE_SUFFIX}"
         exit 1
     else
         [ -z $(grep "bt-tracker=" ${ARIA2_CONF}) ] && echo "bt-tracker=" >>${ARIA2_CONF}
-        sed -i "s@^\(bt-tracker=\).*@\1${TRACKER}@" ${ARIA2_CONF} && echo -e "$(DATE_TIME) | ${INFO} | BT trackers successfully added to Aria2 configuration file !"
+        sed -i "s@^\(bt-tracker=\).*@\1${TRACKER}@" ${ARIA2_CONF} && echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}BT trackers successfully added to Aria2 configuration file.${STYLE_SUFFIX}"
     fi
 }
 
 [ $(command -v curl) ] || {
-    echo -e "$(DATE_TIME) | ${ERROR} | curl is not installed."
+    echo -e "$(DATE_TIME) | ${ERROR} | ${RED_FONT_PREFIX}${BOLD_FONT_PREFIX}curl is not installed.${STYLE_SUFFIX}"
     exit 1
 }
 
