@@ -5,11 +5,15 @@ from aria2p import API as ariaAPI, Client as ariaClient
 from flask import Flask, request, render_template
 from web.nodes import make_tree
 
+logger.add(sys.stdout,
+           format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>")
+logger.add("log.txt",
+           enqueue=True)
 LOGGER = logger
 
 app = Flask(__name__)
 
-aria2 = ariaAPI(ariaClient(host="http://127.0.0.1", port=6800, secret=""))
+aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
 
 def re_verfiy(paused, resumed, client, hash_id):
 
@@ -36,7 +40,7 @@ def re_verfiy(paused, resumed, client, hash_id):
         LOGGER.info("Reverification Failed! Correcting stuff...")
         client.auth_log_out()
         sleep(1)
-        client = qbClient(host="127.0.0.1", port="8090")
+        client = qbClient(host="localhost", port="8090")
         try:
             client.torrents_file_priority(torrent_hash=hash_id, file_ids=paused, priority=0)
         except NotFound404Error:
@@ -71,7 +75,7 @@ def list_torrent_contents(id_):
         return "<h1>Incorrect pin code</h1>"
 
     if len(id_) > 20:
-        client = qbClient(host="127.0.0.1", port="8090")
+        client = qbClient(host="localhost", port="8090")
         res = client.torrents_files(torrent_hash=id_)
         cont = make_tree(res)
         client.auth_log_out()
@@ -101,7 +105,7 @@ def set_priority(id_):
         pause = pause.strip("|")
         resume = resume.strip("|")
 
-        client = qbClient(host="127.0.0.1", port="8090")
+        client = qbClient(host="localhost", port="8090")
 
         try:
             client.torrents_file_priority(torrent_hash=id_, file_ids=pause, priority=0)
