@@ -57,7 +57,7 @@ async def ping(client, message):
     await editMessage(f'⚡ `{end_time - start_time} ms`', reply)
 
 async def get_log(client, message):
-    reply = sendMessage("Preparing log file...", message)
+    reply = await sendMessage("Preparing log file...", message)
     current_time = strftime("%y%m%d-%H%M%S", localtime())
     log_file = copyfile('log.txt', f'log-{current_time}.txt')
     await deleteMessage(reply)

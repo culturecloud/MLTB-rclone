@@ -19,7 +19,7 @@ LOGGER.info("Running updater script...")
 
 CONFIG_ENV = environ.get('CONFIG_ENV', None)
 if CONFIG_ENV:
-    LOGGER.info("CONFIG_ENV variable found! Downloading config file ...")
+    LOGGER.info("CONFIG_ENV variable found! Downloading config file...")
     download_file = srun(["curl", "-sL", f"{CONFIG_ENV}", "-o", "config.env"])
     if download_file.returncode == 0:
         LOGGER.info("Config file has been downloaded as 'config.env'")
