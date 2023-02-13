@@ -79,6 +79,6 @@ if UPSTREAM_REPO is not None:
             && git reset --hard origin/{UPSTREAM_BRANCH} -q"], shell=True)
 
     if update.returncode == 0:
-        LOGGER.info(f'Successfully pulled latest changes from upstream {UPSTREAM_REPO} ({UPSTREAM_REPO})')
+        LOGGER.info(f'Successfully pulled latest changes from upstream {UPSTREAM_REPO} ({UPSTREAM_BRANCH})')
     else:
         LOGGER.error('Something went wrong while updating, make sure UPSTREAM_REPO and UPSTREAM_BRANCH are valid!')
