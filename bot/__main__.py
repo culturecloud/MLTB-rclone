@@ -123,12 +123,8 @@ async def main():
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         try:
-            await bot.edit_message_text(chat_id, msg_id,
-                                       f'''
-                                       ⚡ Restarted successfully!
-                                       Version : `{__version__}`
-                                       ''')
-            LOGGER.info("Bot restarted successfully!")
+            await bot.edit_message_text(chat_id, msg_id, f'⚡ Restarted successfully!\nVersion : `{__version__}`')
+            LOGGER.info("⚡ Bot restarted successfully!")
         except:
             pass   
         osremove(".restartmsg")
