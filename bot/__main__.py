@@ -8,7 +8,7 @@ from sys import executable
 from subprocess import run as srun
 from bot.helper.ext_utils.bot_commands import BotCommands
 from bot.helper.ext_utils.filters import CustomFilters
-from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage, sendFile
+from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage, deleteMessage, sendFile
 from bot.helper.ext_utils.misc_utils import ButtonMaker, exit_cleanup, start_cleanup
 from bot.helper.ext_utils import db_handler
 from bot.modules import batch, cancel, botfiles, copy, leech, mirror_leech, myfilesset, owner_settings, cloudselect, search, myfiles, stats, status, clone, storage, cleanup, user_settings, ytdlp, shell, exec, bt_select, sync, bisync, rss
@@ -57,8 +57,10 @@ async def ping(client, message):
     await editMessage(f'⚡ `{end_time - start_time} ms`', reply)
 
 async def get_log(client, message):
+    reply = sendMessage("Preparing log file...", message)
     current_time = strftime("%y%m%d-%H%M%S", localtime())
     log_file = copyfile('log.txt', f'log-{current_time}.txt')
+    await deleteMessage(reply)
     await sendFile(message, log_file)
     
 help_string = f'''
