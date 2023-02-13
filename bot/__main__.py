@@ -60,8 +60,8 @@ async def get_log(client, message):
     reply = await sendMessage("Preparing log file...", message)
     current_time = strftime("%y%m%d-%H%M%S", localtime())
     log_file = copyfile('log.txt', f'log-{current_time}.txt')
-    await deleteMessage(reply)
     await sendFile(message, log_file)
+    await deleteMessage(reply)
     
 help_string = f'''
 <u>**Mirror**</u>
