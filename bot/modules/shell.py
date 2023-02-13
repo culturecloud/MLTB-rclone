@@ -1,6 +1,7 @@
 from subprocess import Popen, PIPE
 from bot import LOGGER, bot
 from bot.helper.ext_utils.bot_commands import BotCommands
+from bot.helper.ext_utils.message_utils import sendMessage
 from bot.helper.ext_utils.filters import CustomFilters
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
@@ -33,9 +34,9 @@ async def shell(client, message):
                 file_name=doc.name,
                 reply_to_message_id= message.id)
     elif len(reply) != 0:
-        await message.reply_text(reply)
+        await sendMessage(reply, message)
     else:
-        await message.reply_text('No Reply')
+        await sendMessage('No Reply', message)
 
 
 shell_handler = MessageHandler(shell, filters= command(BotCommands.ShellCommand) & (CustomFilters.owner_filter))
