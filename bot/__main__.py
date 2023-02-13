@@ -1,4 +1,4 @@
-from signal import signal, SIGINT
+from shutil import copyfile
 from time import time, localtime, strftime
 from bot import __version__, Interval, QbInterval, bot, botloop, app, LOGGER
 from os import path as ospath, remove as osremove, execl as osexecl
@@ -8,7 +8,7 @@ from sys import executable
 from subprocess import run as srun
 from bot.helper.ext_utils.bot_commands import BotCommands
 from bot.helper.ext_utils.filters import CustomFilters
-from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage
+from bot.helper.ext_utils.message_utils import editMessage, sendMarkup, sendMessage, sendFile
 from bot.helper.ext_utils.misc_utils import ButtonMaker, exit_cleanup, start_cleanup
 from bot.helper.ext_utils import db_handler
 from bot.modules import batch, cancel, botfiles, copy, leech, mirror_leech, myfilesset, owner_settings, cloudselect, search, myfiles, stats, status, clone, storage, cleanup, user_settings, ytdlp, shell, exec, bt_select, sync, bisync, rss
@@ -58,7 +58,8 @@ async def ping(client, message):
 
 async def get_log(client, message):
     current_time = strftime("%y%m%d-%H%M%S", localtime())
-    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}.txt")
+    log_file = copyfile('log.txt', f'log-{current_time}.txt')
+    await sendFile(message, log_file)
     
 help_string = f'''
 <u>**Mirror**</u>

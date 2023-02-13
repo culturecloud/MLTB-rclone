@@ -19,10 +19,10 @@ async def shell(client, message):
     stderr = stderr.decode()
     stdout = stdout.decode()
     if len(stdout) != 0:
-        reply += f"*Stdout*\n`{stdout}`\n"
+        reply += f"**Stdout**\n`{stdout}`\n"
         LOGGER.info(f"Shell - {cmd}")
     if len(stderr) != 0:
-        reply += f"*Stderr*\n`{stderr}`\n"
+        reply += f"**Stderr**\n`{stderr}`\n"
         LOGGER.error(f"Shell - {cmd}")
     if len(reply) > 3000:
         with open('shell_output.txt', 'w') as file:
