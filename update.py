@@ -54,6 +54,7 @@ if DATABASE_URL is not None:
     
 UPGRADE_PKGS = environ.get('UPGRADE_PKGS', 'False')
 if UPGRADE_PKGS.lower() == 'true':
+    LOGGER.info("Upgrading python dependencies...")
     srun(["pip3", "install", "--no-cache-dir", "-qUr", "libraries.txt"])
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
@@ -78,6 +79,6 @@ if UPSTREAM_REPO is not None:
             && git reset --hard origin/{UPSTREAM_BRANCH} -q"], shell=True)
 
     if update.returncode == 0:
-        LOGGER.info('Successfully updated from UPSTREAM_REPO')
+        LOGGER.info(f'Successfully pulled latest changes from upstream {UPSTREAM_REPO} ({UPSTREAM_REPO})')
     else:
-        LOGGER.error('Something went wrong while updating, check UPSTREAM_REPO if valid or not!')
+        LOGGER.error('Something went wrong while updating, make sure UPSTREAM_REPO and UPSTREAM_BRANCH are valid!')

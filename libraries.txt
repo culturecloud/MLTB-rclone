@@ -20,6 +20,7 @@ psutil
 pybase64
 pymongo
 pyrogram
+git+https://github.com/Ripeey/Conversation-Pyrogram
 python-dotenv
 python-magic
 qbittorrent-api

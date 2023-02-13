@@ -1,6 +1,6 @@
 from signal import signal, SIGINT
 from time import time, localtime, strftime
-from bot import Interval, QbInterval, bot, botloop, app, LOGGER
+from bot import __version__, Interval, QbInterval, bot, botloop, app, LOGGER
 from os import path as ospath, remove as osremove, execl as osexecl
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
@@ -57,8 +57,8 @@ async def ping(client, message):
     await editMessage(f'⚡ `{end_time - start_time} ms`', reply)
 
 async def get_log(client, message):
-    current_time = strftime("%d%m%y-%H%M%S", localtime())
-    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}")
+    current_time = strftime("%y%m%d-%H%M%S", localtime())
+    await client.send_document(chat_id= message.chat.id , document= "log.txt", file_name=f"log-{current_time}.txt")
     
 help_string = f'''
 <u>**Mirror**</u>
@@ -123,7 +123,11 @@ async def main():
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         try:
-            await bot.edit_message_text(chat_id, msg_id, "Restarted successfully!")
+            await bot.edit_message_text(chat_id, msg_id,
+                                       f'''
+                                       ⚡ Restarted successfully!
+                                       Version : `{__version__}`
+                                       ''')
             LOGGER.info("Bot restarted successfully!")
         except:
             pass   
