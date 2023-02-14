@@ -37,6 +37,7 @@ class StubbedGunicornLogger(Logger):
         self.access_logger.setLevel(LOG_LEVEL)
         
         # Configure loguru before gunicorn starts logging
+        logger.remove()
         logger.configure(handlers=[{
             "sink": sys.stderr,
             "level": "INFO",
@@ -65,6 +66,7 @@ def configure_logger() -> None:
         logging.getLogger(name).propagate = True
 
     # Configure loguru (again) if gunicorn is not used
+    logger.remove()
     logger.configure(handlers=[{
         "sink": sys.stderr,
         "level": "INFO",
