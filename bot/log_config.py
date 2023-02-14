@@ -34,6 +34,8 @@ def configure_logger() -> None:
         logging.getLogger(name).propagate = True
 
     # Configure logger
+    logger.remove()
+    logger.disable("pyrogram")
     logger.configure(handlers=[{
         "sink": sys.stderr,
         "level": "INFO",
