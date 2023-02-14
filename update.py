@@ -11,8 +11,11 @@ from web.log_config import configure_logger
 configure_logger()
 LOGGER = logging.getLogger(__name__)
 
-if ospath.exists('log.txt'):
-    with open('log.txt', 'r+') as f:
+if ospath.exists('info.log'):
+    with open('info.log', 'r+') as f:
+        f.truncate(0)
+if ospath.exists('debug.log'):
+    with open('debug.log', 'r+') as f:
         f.truncate(0)
 
 LOGGER.info("Running updater script...")
