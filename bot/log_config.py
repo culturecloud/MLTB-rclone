@@ -34,10 +34,9 @@ def configure_logger() -> None:
         logging.getLogger(name).propagate = True
 
     # Configure logger
-    logger.disable("convopyro")
     logger.configure(handlers=[{
         "sink": sys.stderr,
-        "level": LOG_LEVEL,
+        "level": "INFO",
         "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
         "colorize": True
     }, {
