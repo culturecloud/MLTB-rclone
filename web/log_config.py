@@ -5,7 +5,7 @@ import sys
 from gunicorn.glogging import Logger
 from loguru import logger
 
-LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL", "INFO"))
+LOG_LEVEL = logging.getLevelName(os.environ.get("LOG_LEVEL", "DEBUG"))
 # JSON_LOGS = True if os.environ.get("JSON_LOGS", "0") == "1" else False
 
 
@@ -39,6 +39,7 @@ class StubbedGunicornLogger(Logger):
         # Configure loguru before gunicorn starts logging
         logger.configure(handlers=[{
             "sink": sys.stderr,
+            "level": LOG_LEVEL,
             "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
             "colorize": True
         }, {
@@ -66,6 +67,7 @@ def configure_logger() -> None:
     # Configure loguru (again) if gunicorn is not used
     logger.configure(handlers=[{
         "sink": sys.stderr,
+        "level": LOG_LEVEL,
         "format": "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
         "colorize": True
     }, {
