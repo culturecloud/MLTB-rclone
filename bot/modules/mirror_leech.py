@@ -10,7 +10,7 @@ from re import match as re_match, split as re_split
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram import filters
 from bot.helper.ext_utils.bot_commands import BotCommands
-from bot.helper.ext_utils.bot_utils import get_content_type, is_gdrive_link, is_magnet, is_mega_link, is_url
+from bot.helper.ext_utils.bot_utils import get_content_type, is_gdrive_link, is_magnet, is_url
 from bot.helper.ext_utils.direct_link_generator import direct_link_generator
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot.helper.ext_utils.filters import CustomFilters
@@ -20,7 +20,6 @@ from bot.helper.ext_utils.rclone_data_holder import get_rclone_data, update_rclo
 from bot.helper.ext_utils.rclone_utils import is_rclone_config, is_remote_selected, list_remotes
 from bot.helper.mirror_leech_utils.download_utils.aria2_download import add_aria2c_download
 from bot.helper.mirror_leech_utils.download_utils.gd_downloader import add_gd_download
-from bot.helper.mirror_leech_utils.download_utils.mega_download import add_mega_download
 from bot.helper.mirror_leech_utils.download_utils.qbit_downloader import add_qb_torrent
 from bot.helper.mirror_leech_utils.download_utils.telegram_downloader import TelegramDownloader
 from bot.modules.listener import MirrorLeechListener
@@ -193,7 +192,7 @@ Number should be always before |newname or pswd:
 
     listener= MirrorLeechListener(message, tag, user_id, isZip=isZip, extract=extract, pswd=pswd, select=select, isLeech=isLeech)
 
-    if not is_mega_link(link) and not is_magnet(link) and not is_gdrive_link(link) \
+    if not is_magnet(link) and not is_gdrive_link(link) \
         and not link.endswith('.torrent'):
         content_type = get_content_type(link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
@@ -225,8 +224,6 @@ Number should be always before |newname or pswd:
                     return await sendMessage(tag + " " + error, message)
     if is_gdrive_link(link):
         await add_gd_download(link, f'{DOWNLOAD_DIR}{listener.uid}', listener, name)   
-    elif is_mega_link(link):
-        await botloop.run_in_executor(None, add_mega_download, link, f'{DOWNLOAD_DIR}{listener.uid}/', listener, name)
     elif is_magnet(link) or ospath.exists(link):
         await add_qb_torrent(link, f'{DOWNLOAD_DIR}{listener.uid}', listener)
     else:

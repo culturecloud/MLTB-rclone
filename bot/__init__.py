@@ -268,18 +268,6 @@ if len(EXTENSION_FILTER) > 0:
     for x in fx:
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
-MEGA_API_KEY = environ.get('MEGA_API_KEY', '')
-if len(MEGA_API_KEY) == 0:
-    LOGGER.warning('MEGA_API_KEY not provided!')
-    MEGA_API_KEY = ''
-
-MEGA_EMAIL_ID = environ.get('MEGA_EMAIL_ID', '')
-MEGA_PASSWORD = environ.get('MEGA_PASSWORD', '')
-if len(MEGA_EMAIL_ID) == 0 or len(MEGA_PASSWORD) == 0:
-    LOGGER.warning('MEGA Credentials not provided!')
-    MEGA_EMAIL_ID = ''
-    MEGA_PASSWORD = ''
-
 LEECH_LOG = environ.get('LEECH_LOG', '')
 if len(LEECH_LOG) != 0:
     leech_log.clear()
@@ -336,9 +324,6 @@ if not config_dict:
                    'LOCAL_MIRROR': LOCAL_MIRROR,
                    'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
                    'LEECH_LOG': LEECH_LOG,
-                   'MEGA_API_KEY': MEGA_API_KEY,
-                   'MEGA_EMAIL_ID': MEGA_EMAIL_ID,
-                   'MEGA_PASSWORD': MEGA_PASSWORD,
                    'MULTI_REMOTE_UP': MULTI_REMOTE_UP,
                    'MULTI_RCLONE_CONFIG': MULTI_RCLONE_CONFIG, 
                    'OWNER_ID': OWNER_ID,

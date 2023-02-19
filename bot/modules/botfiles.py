@@ -87,16 +87,6 @@ async def load_config():
           for x in fx:
                GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
-     MEGA_API_KEY = environ.get('MEGA_API_KEY', '')
-     if len(MEGA_API_KEY) == 0:
-          MEGA_API_KEY = ''
-
-     MEGA_EMAIL_ID = environ.get('MEGA_EMAIL_ID', '')
-     MEGA_PASSWORD = environ.get('MEGA_PASSWORD', '')
-     if len(MEGA_EMAIL_ID) == 0 or len(MEGA_PASSWORD) == 0:
-          MEGA_EMAIL_ID = ''
-          MEGA_PASSWORD = ''
-
      UPTOBOX_TOKEN = environ.get('UPTOBOX_TOKEN', '')
      if len(UPTOBOX_TOKEN) == 0:
           UPTOBOX_TOKEN = ''
@@ -263,9 +253,6 @@ async def load_config():
                          'LOCAL_MIRROR': LOCAL_MIRROR,
                          'LEECH_LOG': LEECH_LOG,
                          'LEECH_SPLIT_SIZE': LEECH_SPLIT_SIZE,
-                         'MEGA_API_KEY': MEGA_API_KEY,
-                         'MEGA_EMAIL_ID': MEGA_EMAIL_ID,
-                         'MEGA_PASSWORD': MEGA_PASSWORD,
                          'MULTI_REMOTE_UP': MULTI_REMOTE_UP,
                          'MULTI_RCLONE_CONFIG': MULTI_RCLONE_CONFIG, 
                          'OWNER_ID': OWNER_ID,
