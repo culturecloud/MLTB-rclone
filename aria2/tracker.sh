@@ -1,33 +1,4 @@
-#!/usr/bin/env bash
-#
-# https://github.com/P3TERX/aria2.conf
-# File name：tracker.sh
-# Description: Get BT trackers and add to Aria2
-# Version: 3.1
-#
-# Copyright (c) 2018-2021 P3TERX <https://p3terx.com>
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
-#
-# BT tracker is provided by the following project.
-# https://github.com/XIU2/TrackersListCollection
-#
+#!/bin/bash
 
 RED_FONT_PREFIX="\033[31m"
 GREEN_FONT_PREFIX="\033[32m"
@@ -50,8 +21,8 @@ GET_TRACKERS() {
         echo && echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}Get BT trackers...${STYLE_SUFFIX}"
         TRACKER=$(
             ${DOWNLOADER} https://trackerslist.com/all_aria2.txt ||
-                ${DOWNLOADER} https://cdn.staticaly.com/gh/XIU2/TrackersListCollection@master/all_aria2.txt ||
-                ${DOWNLOADER} https://trackers.p3terx.com/all_aria2.txt
+            ${DOWNLOADER} https://cdn.staticaly.com/gh/XIU2/TrackersListCollection@master/all_aria2.txt ||
+            ${DOWNLOADER} https://trackers.p3terx.com/all_aria2.txt
         )
     else
         echo && echo -e "$(DATE_TIME) | ${INFO} | ${BOLD_FONT_PREFIX}Get BT trackers from url(s):${STYLE_SUFFIX}${CUSTOM_TRACKER_URL} ..."

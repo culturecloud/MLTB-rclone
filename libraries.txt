@@ -4,7 +4,7 @@ aria2p==0.11.3
 bencoding==0.2.6
 cfscrape==2.1.1
 convopyro==0.5
-cryptg==0.4.0
+cryptg-anyos==0.4.1
 feedparser==6.0.10
 Flask==2.0.3
 google-api-python-client==2.77.0
