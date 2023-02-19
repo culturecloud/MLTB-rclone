@@ -1,4 +1,4 @@
-FROM culturecloud/mltb:test
+FROM culturecloud/mltb:sam-max
     
 WORKDIR /culturecloud/mltb
     
