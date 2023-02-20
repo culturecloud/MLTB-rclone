@@ -40,9 +40,9 @@ async def restart(client, message):
         QbInterval[0].cancel()
         QbInterval.clear()
     exit_cleanup()
-    bot.stop()
+    await bot.stop()
     if app is not None:
-        app.stop()
+        await app.stop()
     srun(["pkill", "-9", "-f", "gunicorn|aria2c|rclone|qbittorrent-nox|ffmpeg"])
     srun(["python3", "update.py"])
     with open(".restartmsg", "w") as f:
