@@ -33,6 +33,7 @@ speedtest-cli
 telegraph
 tenacity
 tgCrypto
+urllib3<2
 uvloop
 xattr
 yt-dlp
